@@ -450,14 +450,14 @@ chrome.storage.local.get("sthActiveAddress", console.log);
 
 ```js
 // Открыть AuthorizeConnect модал
-window.__sthDevConnect({ origin: "https://playpoker.pro" });
+window.__sthDevConnect({ origin: "https://smartholdem.io" });
 
 // Открыть AuthorizeTx модал в режиме SIGN ONLY
 window.__sthDevSignTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
   vendorField: "poker:room42",
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 
 // Открыть AuthorizeTx модал в режиме SIGN + BROADCAST
@@ -465,14 +465,14 @@ window.__sthDevSendTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
   vendorField: "poker:room42",
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 
 // Открыть Swap Hub с предзаполненными полями
 window.__sthDevDeepLink({
   direction: "USDT_TO_STH",
   amount: 42,
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 ```
 

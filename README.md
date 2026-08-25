@@ -484,14 +484,14 @@ When running the application suite under local development configurations (`yarn
 
 ```js
 // Instantly mount the AuthorizeConnect interface view mockup
-window.__sthDevConnect({ origin: "https://playpoker.pro" });
+window.__sthDevConnect({ origin: "https://smartholdem.io" });
 
 // Instantly mount the AuthorizeTx interface layout under SIGN ONLY settings
 window.__sthDevSignTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
   vendorField: "poker:room42",
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 
 // Instantly mount the AuthorizeTx interface layout under SIGN + BROADCAST settings
@@ -499,14 +499,14 @@ window.__sthDevSendTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
   vendorField: "poker:room42",
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 
 // Deep-link directly into the Swap Hub panel featuring fully pre-populated inputs
 window.__sthDevDeepLink({
   direction: "USDT_TO_STH",
   amount: 42,
-  origin: "https://playpoker.pro"
+  origin: "https://smartholdem.io"
 });
 
 ```
