@@ -525,7 +525,7 @@ window.__sthDevDeepLink({
 ### 2.2. Running Local Dev-Preview
 
 ```bash
-cd /app/frontend
+cd /core-wallet
 yarn install
 yarn start
 # → Local server launches at: http://localhost:3000
@@ -537,7 +537,7 @@ The interface rendering pipeline wraps the UI layers inside a centered mock view
 ### 2.3. Compiling Production Chrome Extensions
 
 ```bash
-cd /app/frontend
+cd /core-wallet
 yarn build:extension
 # Compiled build assets drop into: apps/extension/dist/
 
@@ -557,7 +557,7 @@ Output manifest composition inside `apps/extension/dist/`:
 
 1. Point your browser URL interface to: `chrome://extensions`
 2. Toggle the **Developer mode** control switch position located inside the upper-right dashboard region.
-3. Select the **Load unpacked** action button -> target your local file directory directly onto `/app/frontend/apps/extension/dist`.
+3. Select the **Load unpacked** action button -> target your local file directory directly onto `/core-wallet/apps/extension/dist`.
 4. Pin the newly initialized SmartHoldem tool icon explicitly onto your browser taskbar.
 5. Triggering a click interaction onto the taskbar button automatically spawns the Chrome Side Panel interface.
 

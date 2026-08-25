@@ -488,7 +488,7 @@ window.__sthDevDeepLink({
 
 ### 2.2. Локальный preview (dev-режим)
 ```bash
-cd /app/frontend
+cd /core-wallet
 yarn install
 yarn start
 # → открыть http://localhost:3000
@@ -497,7 +497,7 @@ UI рендерится внутри центрированной mockup-рам�
 
 ### 2.3. Сборка Chrome-расширения
 ```bash
-cd /app/frontend
+cd /core-wallet
 yarn build:extension
 # Артефакты: apps/extension/dist/
 ```
@@ -512,7 +512,7 @@ yarn build:extension
 
 ### 2.4. Установка в Chrome
 1. `chrome://extensions` → переключите «Developer mode» в правом верхнем углу.
-2. **Load unpacked** → выбрать `/app/frontend/apps/extension/dist`.
+2. **Load unpacked** → выбрать `/core-wallet/apps/extension/dist`.
 3. Прикрепите иконку SmartHoldem в toolbar.
 4. Клик по иконке → откроется Side Panel.
 
