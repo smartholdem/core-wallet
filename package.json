@@ -4,6 +4,7 @@
   "description": "SmartHoldem (STH) Browser Extension Wallet - Core Edition",
   "type": "module",
   "scripts": {
+    "start": "vite --host 0.0.0.0 --port 3000",
     "dev": "vite --host 0.0.0.0 --port 3509",
     "build": "vue-tsc --noEmit && vite build",
     "build:pwa": "vue-tsc --noEmit && vite build --mode pwa",

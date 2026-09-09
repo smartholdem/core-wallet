@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
             // VitePWA would otherwise generate a minimal one from this block.
             manifest: false,
             includeAssets: [
-              "favicon.svg",
+              "favicon.png",
               "manifest.json",
               "icons/icon-192.png",
               "icons/icon-512.png",

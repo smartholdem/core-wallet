@@ -1,0 +1,18 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "webextensions": true
+  },
+  "globals": {
+    "chrome": "readonly",
+    "browser": "readonly",
+    "defineProps": "readonly",
+    "defineEmits": "readonly",
+    "defineExpose": "readonly",
+    "defineOptions": "readonly",
+    "defineSlots": "readonly",
+    "defineModel": "readonly",
+    "withDefaults": "readonly"
+  }
+}
