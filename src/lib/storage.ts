@@ -1,3 +1,4 @@
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * Chrome storage / localStorage adapter for Pinia persistence.
  * Works in both extension (chrome.storage.local) and dev preview (localStorage).

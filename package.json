@@ -3,6 +3,10 @@
   "version": "1.4.8",
   "description": "SmartHoldem (STH) Browser Extension Wallet - Core Edition",
   "type": "module",
+  "engines": {
+    "node": ">=20",
+    "yarn": ">=1.22"
+  },
   "scripts": {
     "start": "vite --host 0.0.0.0 --port 3000",
     "dev": "vite --host 0.0.0.0 --port 3509",

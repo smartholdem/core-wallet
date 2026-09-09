@@ -1,3 +1,4 @@
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * Runtime environment detection — single source of truth for "where am I
  * running?". The wallet's same Vue codebase ships in 4 surfaces:

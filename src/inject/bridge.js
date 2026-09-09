@@ -1,3 +1,4 @@
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * Isolated-world content script bridge.
  *

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- defineProps/defineEmits/withDefaults are Vue compiler macros */
 import { computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { formatSth, shortAddress, timeAgo } from "@/lib/utils";

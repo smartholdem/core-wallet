@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- defineProps/defineEmits/withDefaults are Vue compiler macros */
 import { ref, computed } from "vue";
 
 const props = withDefaults(

@@ -1,3 +1,4 @@
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 import "./lib/polyfills";
 import { createApp, watchEffect } from "vue";
 import { createPinia } from "pinia";

@@ -483,7 +483,9 @@ window.__sthDevDeepLink({
 ## 2. Техническая документация - сборка и локальный запуск
 
 ### 2.1. Требования
-- Node.js 18+, Yarn 1.22+
+- Node.js 20+ (рекомендуется 24 LTS, см. `.nvmrc`), Yarn 1.22+
+- **Компиляторы не нужны** (`make`, `g++`, `python3`, `node-gyp` не требуются): в репозитории лежат `.yarnrc` / `.npmrc` с `ignore-scripts`, поэтому нативные транзитивные модули (`bcrypto`, `bstring`, `tiny-secp256k1`) не собираются — браузерный бандл использует только их чистые JS-реализации.
+- Воспроизводимая сборка: `yarn install --frozen-lockfile && yarn build:firefox` (зависимости зафиксированы в `yarn.lock`).
 - Chrome 117+ (для Side Panel API)
 
 ### 2.2. Локальный preview (dev-режим)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * AuthorizeConnect — modal shown when a dApp invokes
  * `window.smartholdem.getAccount()` (a.k.a. sth_requestAccounts) and its

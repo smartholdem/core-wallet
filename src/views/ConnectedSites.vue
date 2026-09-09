@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * ConnectedSites — dedicated full-screen view for managing the dApp origin
  * whitelist persisted at `chrome.storage.local.authorizedOrigins`.

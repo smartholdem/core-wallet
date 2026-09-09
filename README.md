@@ -519,7 +519,8 @@ window.__sthDevDeepLink({
 
 ### 2.1. Environment Pre-requisites
 
-* Node.js version 18+ paired with Yarn 1.22+ deployment tooling.
+* Node.js version 20+ (24 LTS recommended, see `.nvmrc`) paired with Yarn 1.22+ deployment tooling.
+* **No native build toolchain required** (`make`, `g++`, `python3`, `node-gyp` are NOT needed). The repository ships `.yarnrc` / `.npmrc` with `ignore-scripts` enabled: transitive native modules (`bcrypto`, `bstring`, `tiny-secp256k1`) are never compiled because the browser bundle only consumes their pure-JS fallbacks.
 * Chrome Browser 117+ (Mandatory for native Side Panel MV3 API compatibility layer execution).
 
 ### 2.2. Running Local Dev-Preview
@@ -661,12 +662,19 @@ End-to-end integration verification with a fully active, real-world native injec
 - Environment: Node.js (v22/v24+)
 - Commandline: PowerShell or Linux terminal
 
-### Step-by-Step Instructions to Reproduce the Build:
-1. Clone the repository https://github.com/smartholdem/Core-Wallet or extract the provided source code archive.
-2. Ensure you are using Node.js (LTS version recommended).
-3. Run `yarn install` to install the exact vendor dependencies, including core cryptographic modules (secp256k1, bip39).
+### Step-by-Step Instructions to Reproduce the Build (verified on Ubuntu 24.04 x86_64 / ARM64, Node v24, yarn 1.22.22):
+1. Clone the repository https://github.com/smartholdem/core-wallet or extract the provided source code archive.
+2. Use Node.js 24 LTS (`nvm use` picks it up from `.nvmrc`). No compilers or `node-gyp` toolchain are required.
+3. Run `yarn install --frozen-lockfile` to install the exact vendor dependencies pinned in the committed `yarn.lock`. Native post-install scripts are skipped automatically (`.yarnrc` → `ignore-scripts true`); you will see `warning Ignored scripts due to flag.` — this is expected.
 4. Run the production build command: `yarn build:firefox`.
-5. The compiled extension assets and production manifest file will be generated locally in the output directory (`/dist` and`/app`).
+5. The unpacked extension is written to `apps/extension/dist-firefox/` and the AMO-ready archive to `apps/extension/smartholdem-wallet-firefox-<version>.zip`. The script prints the artefact path, size and SHA-256.
+
+```bash
+git clone https://github.com/smartholdem/core-wallet.git && cd core-wallet
+nvm use                     # Node 24 (from .nvmrc)
+yarn install --frozen-lockfile
+yarn build:firefox
+```
 
 ### Troubleshooting & Build:
 If you encounter a Vite caching or HTML proxy compilation error during the build process (such as `[vite:html-inline-proxy] No matching HTML proxy module found`), please apply the following standard Vite resolution steps:

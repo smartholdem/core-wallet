@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 import { ref, computed } from "vue";
 import axios from "axios";
 import { useIntentStore } from "@/stores/intent";

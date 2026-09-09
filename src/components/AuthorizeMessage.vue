@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * AuthorizeMessage — modal shown when a dApp invokes
  * `window.smartholdem.signMessage(message)`.
