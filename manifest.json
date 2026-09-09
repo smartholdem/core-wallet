@@ -3,7 +3,7 @@
   "name": "SmartHoldem Wallet (STH)",
   "short_name": "SmartHoldem Wallet",
   "version": "1.4.8",
-  "description": "Decentralized ecosystem wallet for SmartHoldem blockchain.",
+  "description": "Self-custodial wallet for the SmartHoldem (STH) blockchain: send, receive, swap and sign for dApps. Your keys, your coins.",
   "permissions": ["sidePanel", "storage", "activeTab", "tabs"],
   "action": {
     "default_title": "SmartHoldem Wallet",

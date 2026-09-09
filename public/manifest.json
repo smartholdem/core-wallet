@@ -1,7 +1,7 @@
 {
   "name": "SmartHoldem - PRIME Edition",
   "short_name": "PRIME WALLET",
-  "description": "An industrial-grade crypto wallet for SmartHoldem (STH). Built for games, payments, and pure on-chain sovereignty.",
+  "description": "Self-custodial wallet for the SmartHoldem (STH) blockchain: send, receive, swap and sign for dApps. Your keys, your coins.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

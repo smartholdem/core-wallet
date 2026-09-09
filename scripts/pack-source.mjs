@@ -47,7 +47,6 @@ const FILES = [
   "tailwind.config.js",
   "postcss.config.js",
   "README.md",
-  "README_RU.md",
   "LICENSE",
   "AMO_REVIEWER_BUILD.md",
 ];
