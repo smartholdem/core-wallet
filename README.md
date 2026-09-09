@@ -15,7 +15,7 @@
 * **Seed Restoration** – Allows pasting mnemonics or raw private keys, fully validated via `Identities.Address.validate(addr, 63)`.
 * **Encrypted `.sth` Backup Import** – Directly executable from both the Welcome and Settings screens.
 * **HD Multi-Accounts** – BIP-44 pathing `m/44'/255'/account'/0/0` via `@scure/bip32`. Account #0 provides perfect compatibility with wallet-pro's passphrase-derivation model.
-* **Account Switcher** (`AccountSwitcher`) – Displays real-time balances, includes rapid address copying, and supports inline renaming (e.g., "Account 2" → "Poker Bankroll").
+* **Account Switcher** (`AccountSwitcher`) – Displays real-time balances, includes rapid address copying, and supports inline renaming (e.g., "Account 2" -> "Poker Bankroll").
 * **PIN Lockbox** (Gatekeeper) – Styled with custom dot indicators, a Scan-line animation grid, and a brutalist numeric keypad overlay.
 
 ### 1.2. Dashboard (Vault)
@@ -65,13 +65,13 @@
 
 * **Appearance:** A three-way theme selector: `RUST CLASSIC` (Default, #E25822), `CYAN STEEL` (#4F46E5 + #06B6D4), and `INDUSTRIAL LIGHT` (Machined aluminum #EAECEF background + blueprint grid layout + deep burned amber accents). Driven globally via `[data-theme="…"]` CSS attributes.
 * **Security:** In-app seed phrase and private key viewing, guarded behind mandatory PIN re-authentication.
-* **Backup & Encrypted Vault:** Exports complete wallet configurations into an external `.sth` file (PBKDF2-SHA256 25k iterations → AES-256-CBC PKCS7 + random IV) with seamless drag-and-drop file importing.
+* **Backup & Encrypted Vault:** Exports complete wallet configurations into an external `.sth` file (PBKDF2-SHA256 25k iterations -> AES-256-CBC PKCS7 + random IV) with seamless drag-and-drop file importing.
 * **Mainnet Node Pool:** Integrates a built-in pool of 7 mainnet nodes with continuous latency monitoring, automatically auto-routing traffic to the fastest peer.
 * **Wipe Secure Storage:** A secure, two-stage nuclear-wipe confirmation action styled in high-visibility Rust Orange.
 
 ### 1.8. Web3 Provider (For dApp Developers)
 
-The extension injects a standalone **`window.smartholdem`** proxy object into every loaded webpage via `inject.js` (running inside the MAIN world content script context). All exposed methods return a standard `Promise` and route execution through an asynchronous message-passing pipeline: **page → bridge.js (ISOLATED) → background SW → extension UI (Side Panel/Popup)**, where the user can inspect, approve, or reject the context. The communication channel remains alive awaiting manual interaction (utilizing asynchronous `sendResponse` handling with a 120-second safety timeout closure).
+The extension injects a standalone **`window.smartholdem`** proxy object into every loaded webpage via `inject.js` (running inside the MAIN world content script context). All exposed methods return a standard `Promise` and route execution through an asynchronous message-passing pipeline: **page -> bridge.js (ISOLATED) -> background SW -> extension UI (Side Panel/Popup)**, where the user can inspect, approve, or reject the context. The communication channel remains alive awaiting manual interaction (utilizing asynchronous `sendResponse` handling with a 120-second safety timeout closure).
 
 #### Base Properties
 
@@ -109,11 +109,11 @@ Equivalent to standard `sth_requestAccounts`. Executing this for the first time 
 // Establish connection to the wallet wrapper
 const { address } = await window.smartholdem.getAccount();
 console.log("Active STH address:", address);
-// → "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C"
+// -> "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C"
 
 ```
 
-Users can easily view, audit, or revoke trusted origins inside the wallet via: **TopBar Key icon → ACCESS · CONNECTED APPS**.
+Users can easily view, audit, or revoke trusted origins inside the wallet via: **TopBar Key icon -> ACCESS · CONNECTED APPS**.
 
 ---
 
@@ -241,8 +241,8 @@ const r = await window.smartholdem.sendTransaction({
 });
 
 console.log("Tx ID:",   r.id);
-console.log("Accepted:", r.broadcast.accept);   // → [<tx-id>]
-console.log("Errors:",   r.broadcast.errors);   // → {} on success states
+console.log("Accepted:", r.broadcast.accept);   // -> [<tx-id>]
+console.log("Errors:",   r.broadcast.errors);   // -> {} on success states
 
 ```
 
@@ -272,16 +272,16 @@ Directly opens the internal wallet Swap Hub view pre-populating fields automatic
 | --- | --- | --- |
 | `amount` | `number | string` | Total numeric swap trade volume |
 | `direction` | `"STH_TO_USDT" | "USDT_TO_STH"` | Target route currency direction parameter |
-| `destination` | `string` | **Mandatory for STH→USDT routes only** – Defines the target destination BEP-20 USDT payout address. Omitted on inbound USDT→STH trades. |
+| `destination` | `string` | **Mandatory for STH->USDT routes only** – Defines the target destination BEP-20 USDT payout address. Omitted on inbound USDT->STH trades. |
 
 ```js
-// Requesting inbound conversion pipeline: USDT → STH
+// Requesting inbound conversion pipeline: USDT -> STH
 window.smartholdem.requestSwap({
   direction: "USDT_TO_STH",
   amount: 42
 });
 
-// Outbound sweep conversion configuration: STH → USDT over BSC
+// Outbound sweep conversion configuration: STH -> USDT over BSC
 window.smartholdem.requestSwap({
   direction: "STH_TO_USDT",
   amount: 1000,
@@ -294,7 +294,7 @@ window.smartholdem.requestSwap({
 
 #### 1.8.6. Full Integration Test Script (DevTools Console Execution)
 
-Navigate to any destination target domain → Open DevTools → Console → Execute sequentially:
+Navigate to any destination target domain -> Open DevTools -> Console -> Execute sequentially:
 
 ```js
 // 1. Audit active environment injection parameters
@@ -437,9 +437,9 @@ Complete end-to-end dApp request transmission flow:
 │  background.ts  (Service Worker / Firefox Background Script Context)    │
 │                                                                         │
 │  pendingRequests.set(id, { sendResponse, ... })                         │
-│  return true  // Keeps async channel open - 120s safety timeout triggers │
+│  return true  // Keeps async channel open - 120s safety timeout triggers│
 │                                                                         │
-│  ▼  Whitelist fast-path triggered for getAccount → resolve()            │
+│  ▼  Whitelist fast-path triggered for getAccount -> resolve()           │
 │  ▼  Else (Standard UI Fallback):                                        │
 │      runtime.sendMessage({ type: "smartholdem:dispatch", payload })     │
 │      openWalletSurface() // Mounts interface wrapper                    │
@@ -447,9 +447,9 @@ Complete end-to-end dApp request transmission flow:
 ├─────────────────────────────────────────────────────────────────────────┤
 │  Extension UI Layer (Vue 3 App - Side Panel / Popup Context)            │
 │                                                                         │
-│  main.ts → applyIntent() → intent.setSign/setConnect()                  │
+│  main.ts -> applyIntent() -> intent.setSign/setConnect()                │
 │  ▼  AuthorizeTx / AuthorizeConnect / Swap.vue modules mount             │
-│  ▼  User submits confirming PIN or Connect transaction validation        │
+│  ▼  User submits confirming PIN or Connect transaction validation       │
 │                                                                         │
 │  chrome.runtime.sendMessage({                                           │
 │    type: "UI_AUTHORIZE_COMPLETE",                                       │
@@ -458,7 +458,7 @@ Complete end-to-end dApp request transmission flow:
 │                                                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  background.ts: resolvePending(id, payload)                             │
-│  ▼  sendResponse({ id, result }) ← Resolves original bridge.js callback  │
+│  ▼  sendResponse({ id, result }) ← Resolves original bridge.js callback │
 │                                                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  bridge.js: postMessage(window, { source: "smartholdem-wallet",         │
@@ -528,7 +528,7 @@ window.__sthDevDeepLink({
 cd /core-wallet
 yarn install
 yarn start
-# → Local server launches at: http://localhost:3000
+# -> Local server launches at: http://localhost:3000
 
 ```
 
@@ -636,7 +636,7 @@ End-to-end integration verification with a fully active, real-world native injec
 4. **Biometric Security Integration:** Accessing device-level authentication modules via WebAuthn API wrappers to provide immediate TouchID or Windows Hello biometric unlock options, keeping secure PIN signatures as a structural fallback layer.
 5. **Ecosystem Language Extension Packs:** Expanding the multi-language localization framework (`src/locales/index.ts`) beyond core EN, RU, ZH, and ES dictionaries to include comprehensive global translation modules via automated `vue-i18n` configurations.
 6. **Visual Identity Badging per Account View:** Adding unique color indicators and personalized emblem indicators to individual records inside the `AccountSwitcher` components to visually separate "Bankroll", "Cold Storage", and "Faucet" setups.
-7. **Four-Step Guided Onboarding Flow:** Constructing a smooth introduction sequence for first-time deployments: Welcome Dashboard Overview → Mnemonic Generation Audit → Security PIN Signature Lock → Primary Receive Verification displaying an actionable "Fund Your Wallet with a Test-STH" invitation.
+7. **Four-Step Guided Onboarding Flow:** Constructing a smooth introduction sequence for first-time deployments: Welcome Dashboard Overview -> Mnemonic Generation Audit -> Security PIN Signature Lock -> Primary Receive Verification displaying an actionable "Fund Your Wallet with a Test-STH" invitation.
 8. **Bridge Exchange Arrival Metric Calculators:** Integrating diagnostic metric routines to track median liquidity pool settlement times on `trade.xbts.io`, calculating live estimated arrival metrics for cross-chain swaps.
 9. **Dashboard Analytic Data Visualization Sparklines:** Injecting minimal 24-hour historical market trend line charts for STH/USDT inside the main top balance presentation panel.
  
