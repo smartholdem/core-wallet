@@ -486,6 +486,8 @@ window.__sthDevDeepLink({
 - Node.js 20+ (рекомендуется 24 LTS, см. `.nvmrc`), Yarn 1.22+
 - **Компиляторы не нужны** (`make`, `g++`, `python3`, `node-gyp` не требуются): в репозитории лежат `.yarnrc` / `.npmrc` с `ignore-scripts`, поэтому нативные транзитивные модули (`bcrypto`, `bstring`, `tiny-secp256k1`) не собираются — браузерный бандл использует только их чистые JS-реализации.
 - Воспроизводимая сборка: `yarn install --frozen-lockfile && yarn build:firefox` (зависимости зафиксированы в `yarn.lock`).
+- Архив исходников для ревьюера AMO: `yarn pack:source` → `apps/extension/smartholdem-wallet-source-<версия>.zip` (только `src/`, `scripts/`, `public/`, конфиги, `yarn.lock`, README — без `node_modules`, сборок и секретов). Выполняется автоматически внутри `yarn build:firefox`.
+- Автоматическая отправка на AMO: `yarn build:firefox:sign` = `build:firefox` + `sign:amo` (`web-ext sign` + прикрепление архива исходников). Обычный `yarn build:firefox` в сеть не ходит. Для отправки в `.env` нужны `AMO_JWT_ISSUER` и `AMO_JWT_SECRET` (addons.mozilla.org → Tools → Manage API Keys; шаблон — `.env.example`); без ключей шаг пропускается. Канал: `AMO_CHANNEL=listed|unlisted`. Одинаковую версию AMO не принимает (409) — перед каждой отправкой поднимайте `version` в `package.json` и `manifest.json`.
 - Chrome 117+ (для Side Panel API)
 
 ### 2.2. Локальный preview (dev-режим)

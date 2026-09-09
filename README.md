@@ -676,6 +676,25 @@ yarn install --frozen-lockfile
 yarn build:firefox
 ```
 
+### Reviewer Source Archive & Automated AMO Submission
+
+| Command | What it does |
+|---|---|
+| `yarn pack:source` | Zips exactly the reviewer-needed files (`src/`, `scripts/`, `public/`, configs, `yarn.lock`, README) into `apps/extension/smartholdem-wallet-source-<version>.zip`. No `node_modules`, no build output, no secrets. Runs automatically inside `yarn build:firefox`. |
+| `yarn sign:amo` | Submits `apps/extension/dist-firefox/` to addons.mozilla.org through `web-ext sign` and attaches the source archive (`--upload-source-code`). Requires `AMO_JWT_ISSUER` / `AMO_JWT_SECRET`; without them it prints `○ AMO signing skipped` and exits 0. |
+| `yarn build:firefox:sign` | `build:firefox` + `sign:amo` in one shot — the only command that talks to AMO. Plain `yarn build:firefox` never touches the network. |
+
+Credentials come from `.env` (git-ignored, see `.env.example`) — create them at *addons.mozilla.org → Tools → Manage API Keys*:
+
+```dotenv
+AMO_JWT_ISSUER=user:12345678:123
+AMO_JWT_SECRET=<64-hex secret>
+AMO_CHANNEL=listed            # or unlisted (self-distributed, auto-signed)
+AMO_APPROVAL_TIMEOUT=         # ms to wait for the signed .xpi; default 0 for listed, 900000 for unlisted
+```
+
+Notes: AMO rejects a version number that was already uploaded (HTTP 409) — bump `version` in `package.json` **and** `manifest.json` for every submission. For `listed`, the signed `.xpi` only becomes available after human review; for `unlisted`, it is downloaded into `apps/extension/` within minutes. `yarn sign:amo --channel=unlisted` overrides the channel for a single run.
+
 ### Troubleshooting & Build:
 If you encounter a Vite caching or HTML proxy compilation error during the build process (such as `[vite:html-inline-proxy] No matching HTML proxy module found`), please apply the following standard Vite resolution steps:
 1. Completely clear the local dependency and optimizer cache by running: `rm -rf node_modules/.vite` (or delete the `.vite` folder inside `node_modules`).
