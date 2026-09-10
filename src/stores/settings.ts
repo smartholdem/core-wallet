@@ -31,6 +31,10 @@ export const useSettingsStore = defineStore("appSettings", {
     theme: "rust" as "rust" | "cyan" | "light",
     locale: "en" as "en" | "ru" | "zh" | "es",
     pinHash: "" as string, // SHA-384(pin)
+    /** Native only: unlock with fingerprint/face; PIN is kept in Keystore. */
+    biometricUnlock: false,
+    /** Native only: dApp URLs opened in the in-app browser (most recent first). */
+    recentDapps: [] as string[],
     nodes: [...DEFAULT_NODES],
     activeNode: "node0.smartholdem.io",
     nodesStatus: [] as NodeStatus[],

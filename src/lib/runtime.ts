@@ -40,9 +40,22 @@ export function isStandalonePWA(): boolean {
   }
 }
 
+/** True inside the Capacitor native shell (Android / iOS WebView). */
+export function isNativeApp(): boolean {
+  const cap = (globalThis as any).Capacitor;
+  return !!cap && typeof cap.isNativePlatform === "function" && cap.isNativePlatform();
+}
+
+/** "android" | "ios" inside Capacitor, null elsewhere. */
+export function nativePlatform(): "android" | "ios" | null {
+  if (!isNativeApp()) return null;
+  const p = (globalThis as any).Capacitor.getPlatform();
+  return p === "android" || p === "ios" ? p : null;
+}
+
 /** True when the wallet runs as plain page in a normal browser tab. */
 export function isWebTab(): boolean {
-  return !isExtension() && !isStandalonePWA();
+  return !isExtension() && !isStandalonePWA() && !isNativeApp();
 }
 
 /**
@@ -50,8 +63,10 @@ export function isWebTab(): boolean {
  * logging and conditional UI tweaks (e.g. hiding "Open in side panel"
  * link when we're already in the side panel).
  */
-export function surfaceLabel(): "extension" | "pwa" | "web" {
+export function surfaceLabel(): "extension" | "android" | "ios" | "pwa" | "web" {
   if (isExtension()) return "extension";
+  const native = nativePlatform();
+  if (native) return native;
   if (isStandalonePWA()) return "pwa";
   return "web";
 }

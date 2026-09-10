@@ -6,14 +6,40 @@ import { useWalletStore, STH_FEE } from "@/stores/wallet";
 import { pushToast, formatSth } from "@/lib/utils";
 import HoldButton from "@/components/HoldButton.vue";
 import BottomDock from "@/components/BottomDock.vue";
+import { canScanQr, scanQr, parsePaymentQr } from "@/lib/qr";
+import { useT } from "@/locales";
 
 const router = useRouter();
 const auth = useAuthStore();
 const wallet = useWalletStore();
+const t = useT();
 
 const recipient = ref("");
 const amount = ref("");
 const memo = ref("");
+const canScan = canScanQr();
+const scanning = ref(false);
+
+async function scan() {
+  scanning.value = true;
+  try {
+    const raw = await scanQr(t.value("send.scanHint"));
+    if (raw == null) return;
+    const parsed = parsePaymentQr(raw);
+    if (!parsed) {
+      pushToast(t.value("send.scanInvalid"), "error");
+      return;
+    }
+    recipient.value = parsed.address;
+    if (parsed.amount) amount.value = parsed.amount;
+    if (parsed.memo) memo.value = parsed.memo;
+    pushToast(t.value("send.scanOk"), "success");
+  } catch (e: any) {
+    pushToast(e?.message || t.value("send.scanFailed"), "error");
+  } finally {
+    scanning.value = false;
+  }
+}
 const sending = ref(false);
 const lastTxId = ref<string | null>(null);
 
@@ -88,7 +114,22 @@ function setMax() {
     <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4">
       <!-- Recipient -->
       <div>
-        <label class="forge-label">Recipient STH Address</label>
+        <div class="flex items-center justify-between">
+          <label class="forge-label">Recipient STH Address</label>
+          <button
+            v-if="canScan"
+            type="button"
+            @click="scan"
+            :disabled="scanning"
+            class="text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-bone disabled:opacity-40 flex items-center gap-1 mb-1.5"
+            data-testid="scan-qr-btn"
+          >
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10" />
+            </svg>
+            {{ t("send.scan") }}
+          </button>
+        </div>
         <input
           v-model="recipient"
           spellcheck="false"

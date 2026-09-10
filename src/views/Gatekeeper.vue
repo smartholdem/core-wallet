@@ -6,6 +6,10 @@ import { pushToast } from "@/lib/utils";
 import PinPad from "@/components/PinPad.vue";
 import LanguageDropdown from "@/components/LanguageDropdown.vue";
 import { useT } from "@/locales";
+import { onMounted } from "vue";
+import { useSettingsStore } from "@/stores/settings";
+import { isNativeApp } from "@/lib/runtime";
+import { biometricPin } from "@/lib/secure";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -14,6 +18,21 @@ const t = useT();
 const pin = ref("");
 const error = ref(false);
 const attempts = ref(0);
+const settings = useSettingsStore();
+const bioAvailable = isNativeApp() && settings.biometricUnlock;
+const bioBusy = ref(false);
+
+async function tryBiometric() {
+  if (!bioAvailable || bioBusy.value) return;
+  bioBusy.value = true;
+  try {
+    const p = await biometricPin(t.value("set.bio.reason"), t.value("set.bio.title"));
+    if (p) tryUnlock(p);
+  } finally {
+    bioBusy.value = false;
+  }
+}
+onMounted(() => { if (bioAvailable) tryBiometric(); });
 
 function tryUnlock(v: string) {
   if (auth.unlock(v)) {
@@ -100,6 +119,18 @@ const bullets = [
     <div class="flex-1" />
 
     <div class="relative">
+      <button
+        v-if="bioAvailable"
+        @click="tryBiometric"
+        :disabled="bioBusy"
+        class="w-full mb-3 forge-card p-3 flex items-center justify-center gap-2 text-sm text-cyan-voltGlow border-cyan-volt/40 disabled:opacity-40"
+        data-testid="biometric-unlock-btn"
+      >
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 11c-1.7 0-3 1.3-3 3v2M12 11c1.7 0 3 1.3 3 3v3M12 7c-3.9 0-7 3.1-7 7v1M12 7c3.9 0 7 3.1 7 7M12 3c-2 0-3.9.5-5.5 1.5M12 3c2 0 3.9.5 5.5 1.5M12 15v4" />
+        </svg>
+        {{ t("lock.biometric") }}
+      </button>
       <PinPad v-model="pin" :length="6" :error="error" @complete="tryUnlock" />
       <p
         v-if="attempts > 2"

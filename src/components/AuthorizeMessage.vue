@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { completeAuthorize } from "@/lib/dappBus";
 /* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * AuthorizeMessage — modal shown when a dApp invokes
@@ -43,14 +44,7 @@ const originHost = computed(() => {
 });
 
 function sendUiComplete(approved: boolean, payload: any, error?: string) {
-  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
-  chrome.runtime.sendMessage({
-    type: "UI_AUTHORIZE_COMPLETE",
-    requestId: req.value?.id,
-    approved,
-    payload,
-    error,
-  });
+  void completeAuthorize(req.value?.id, approved, payload, error);
 }
 
 function approve() {

@@ -2,6 +2,7 @@
 import { useRouter, useRoute } from "vue-router";
 import { computed } from "vue";
 import { useT } from "@/locales";
+import { isNativeApp } from "@/lib/runtime";
 
 const router = useRouter();
 const route = useRoute();
@@ -11,7 +12,7 @@ interface DockItem {
   path: string;
   /** Translation key — looked up at render time so the label reacts to locale changes. */
   labelKey: string;
-  icon: "vault" | "ledger" | "core";
+  icon: "vault" | "ledger" | "dapps" | "core";
   /** All sub-routes that should keep this item highlighted. */
   matches: (p: string) => boolean;
 }
@@ -31,6 +32,10 @@ const items: DockItem[] = [
       p.startsWith("/swap"),
   },
   { path: "/history", labelKey: "nav.ledger", icon: "ledger", matches: (p) => p.startsWith("/history") },
+  // dApp browser exists only inside the native app (no extension bridge there)
+  ...(isNativeApp()
+    ? [{ path: "/dapps", labelKey: "nav.dapps", icon: "dapps" as const, matches: (p: string) => p.startsWith("/dapps") }]
+    : []),
   { path: "/settings", labelKey: "nav.core", icon: "core", matches: (p) => p.startsWith("/settings") },
 ];
 
@@ -85,6 +90,17 @@ function go(it: DockItem) {
       >
         <path d="M4 5h16v14H4z" />
         <path d="M8 9h8M8 13h8M8 17h5" />
+      </svg>
+      <svg
+        v-else-if="it.icon === 'dapps'"
+        viewBox="0 0 24 24"
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
       </svg>
       <svg
         v-else

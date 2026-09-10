@@ -12,6 +12,11 @@
     "dev": "vite --host 0.0.0.0 --port 3509",
     "build": "vue-tsc --noEmit && vite build",
     "build:pwa": "vue-tsc --noEmit && vite build --mode pwa",
+    "build:android": "vue-tsc --noEmit && vite build --mode android && node scripts/android-version.mjs && cap sync android",
+    "android:open": "cap open android",
+    "android:apk": "yarn build:android && cd android && ./gradlew assembleDebug",
+    "android:aab": "yarn build:android && cd android && ./gradlew bundleRelease",
+    "android:assets": "capacitor-assets generate --android --iconBackgroundColor '#121315' --iconBackgroundColorDark '#121315' --splashBackgroundColor '#121315' --splashBackgroundColorDark '#121315'",
     "preview:pwa": "vite preview --port 4173",
     "build:extension": "vue-tsc --noEmit && vite build -c vite.config.extension.ts && node scripts/check-csp.mjs && node scripts/pack-crx.mjs",
     "build:firefox": "vue-tsc --noEmit && node scripts/build-firefox.mjs && node scripts/pack-source.mjs",
@@ -23,6 +28,13 @@
     "preview": "vite preview --host 0.0.0.0 --port 3509"
   },
   "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "10",
+    "@aparajita/capacitor-secure-storage": "8",
+    "@capacitor/android": "8",
+    "@capacitor/app": "8",
+    "@capacitor/barcode-scanner": "3",
+    "@capacitor/core": "8",
+    "@capgo/inappbrowser": "8",
     "@scure/bip32": "^2.2.0",
     "@smartholdem/client": "^2.0.0",
     "@smartholdem/crypto": "^3.8.3",
@@ -41,6 +53,8 @@
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "8",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@types/chrome": "^0.0.279",
     "@types/crypto-js": "^4.2.2",

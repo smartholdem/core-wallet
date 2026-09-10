@@ -171,6 +171,26 @@ body {
   height: 100vh;
 }
 
+/* === Native shell (Capacitor Android / iOS) — full screen, safe areas === */
+.native-shell {
+  margin: 0;
+  background: #121315;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+.native-shell #app {
+  width: 100%;
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow: hidden;
+  position: relative;
+}
+
 /* === Light-theme component overrides === */
 /* The dark-theme components apply background-tinted utility classes
  * (bg-rust/15, bg-indigo-forge/15, etc.) that are eye-friendly on dark

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { encryptSecret, decryptSecret, pinHash } from "@/lib/crypto";
 import { useSettingsStore } from "@/stores/settings";
+import { vaultStorage } from "@/lib/storage";
 
 export interface AccountMeta {
   index: number;
@@ -126,10 +127,13 @@ export const useAuthStore = defineStore("auth", {
       const settings = useSettingsStore();
       settings.pinHash = "";
       try {
+        vaultStorage.removeItem("sth.auth");
         localStorage.removeItem("sth.auth");
         localStorage.removeItem("sth.settings");
         localStorage.removeItem("sth.wallet");
+        localStorage.removeItem("sth.authorizedOrigins");
       } catch {}
+      import("@/lib/secure").then((m) => m.disableBiometricUnlock()).catch(() => {});
     },
     verify(pin: string): boolean {
       const settings = useSettingsStore();
@@ -138,7 +142,7 @@ export const useAuthStore = defineStore("auth", {
   },
   persist: {
     key: "sth.auth",
-    storage: localStorage,
+    storage: vaultStorage,
     pick: ["account"],
   } as any,
 });

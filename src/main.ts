@@ -7,8 +7,18 @@ import App from "./App.vue";
 import { router } from "./router";
 import { useIntentStore } from "@/stores/intent";
 import { useAuthStore } from "@/stores/auth";
-import { isExtension, isStandalonePWA, surfaceLabel } from "@/lib/runtime";
+import { isExtension, isStandalonePWA, isNativeApp, surfaceLabel } from "@/lib/runtime";
+import { hydrateNativeVault } from "@/lib/storage";
 import "./style.css";
+
+// Native shell (Capacitor): drop the 400×720 "device frame" used by the web
+// preview and let the wallet own the whole screen incl. safe areas.
+if (isNativeApp() && typeof document !== "undefined") {
+  document.body.classList.replace("preview-shell", "native-shell");
+}
+
+// Keystore-backed vault must be in memory before Pinia hydrates the auth store.
+await hydrateNativeVault();
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
@@ -108,6 +118,18 @@ if (isExtension() && chrome.runtime?.onMessage) {
     // UI_AUTHORIZE_COMPLETE with the correct key.
     applyIntent(method, { ...(params || {}), __id: id, origin });
   });
+}
+
+// Android/iOS: dApp requests arrive from the in-app browser instead of the
+// extension background — same intent pipeline, different transport.
+if (isNativeApp()) {
+  import("@/lib/dappBrowser").then(({ dappBrowser }) =>
+    dappBrowser.init({
+      onRequest: applyIntent,
+      isLocked: () => auth.isLocked,
+      address: () => auth.address,
+    }),
+  );
 }
 
 // Whitelist fast-path enabler — only relevant inside an extension where

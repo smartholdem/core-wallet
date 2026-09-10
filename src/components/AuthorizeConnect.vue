@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { completeAuthorize } from "@/lib/dappBus";
+import { addAuthorizedOrigin } from "@/lib/origins";
 /* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 /**
  * AuthorizeConnect — modal shown when a dApp invokes
@@ -41,27 +43,11 @@ const originHost = computed(() => {
 });
 
 function sendUiComplete(approved: boolean, payload: any, error?: string) {
-  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
-  chrome.runtime.sendMessage({
-    type: "UI_AUTHORIZE_COMPLETE",
-    requestId: req.value?.id,
-    approved,
-    payload,
-    error,
-  });
+  void completeAuthorize(req.value?.id, approved, payload, error);
 }
 
 async function persistTrustedOrigin(origin: string) {
-  if (typeof chrome === "undefined" || !chrome.storage?.local) return;
-  await new Promise<void>((resolve) => {
-    chrome.storage.local.get("authorizedOrigins", (res: any) => {
-      const cur: string[] = Array.isArray(res?.authorizedOrigins)
-        ? res.authorizedOrigins
-        : [];
-      if (!cur.includes(origin)) cur.push(origin);
-      chrome.storage.local.set({ authorizedOrigins: cur }, () => resolve());
-    });
-  });
+  await addAuthorizedOrigin(origin);
 }
 
 async function approve() {

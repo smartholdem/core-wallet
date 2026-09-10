@@ -58,6 +58,8 @@ export default defineConfig({
     global: "globalThis",
   },
   build: {
+    target: "es2022",
+    target: "es2022",
     outDir: OUT_DIR,
     emptyOutDir: true,
     chunkSizeWarningLimit: 800,

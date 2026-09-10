@@ -14,6 +14,8 @@ import {
 import BottomDock from "@/components/BottomDock.vue";
 import PinPad from "@/components/PinPad.vue";
 import { useT } from "@/locales";
+import { isNativeApp } from "@/lib/runtime";
+import { biometryInfo, enableBiometricUnlock, disableBiometricUnlock } from "@/lib/secure";
 
 const router = useRouter();
 const settings = useSettingsStore();
@@ -40,6 +42,53 @@ const AUTOLOCK_PRESETS = [
 
 // === Vault export ===
 const exporting = ref(false);
+
+// Biometric unlock (native only)
+const isNative = isNativeApp();
+const bio = ref<{ available: boolean; type: string }>({ available: false, type: "none" });
+const bioPinOpen = ref(false);
+const bioPin = ref("");
+const bioPinError = ref(false);
+const bioBusy = ref(false);
+if (isNative) biometryInfo().then((i) => (bio.value = i));
+
+async function toggleBiometric() {
+  if (bioBusy.value) return;
+  if (settings.biometricUnlock) {
+    bioBusy.value = true;
+    await disableBiometricUnlock();
+    settings.biometricUnlock = false;
+    bioBusy.value = false;
+    pushToast(t.value("set.bio.off"), "info");
+    return;
+  }
+  bioPin.value = "";
+  bioPinError.value = false;
+  bioPinOpen.value = true;
+}
+
+async function onBioPinComplete(v: string) {
+  if (!auth.verify(v)) {
+    bioPinError.value = true;
+    setTimeout(() => { bioPinError.value = false; bioPin.value = ""; }, 600);
+    return;
+  }
+  bioBusy.value = true;
+  try {
+    const ok = await enableBiometricUnlock(v, t.value("set.bio.reason"), t.value("set.bio.title"));
+    if (ok) {
+      settings.biometricUnlock = true;
+      pushToast(t.value("set.bio.on"), "success");
+      bioPinOpen.value = false;
+    } else {
+      pushToast(t.value("set.bio.cancelled"), "error");
+    }
+  } catch (e: any) {
+    pushToast(e?.message || t.value("set.bio.failed"), "error");
+  } finally {
+    bioBusy.value = false;
+  }
+}
 const exportPinOpen = ref(false);
 const exportPin = ref("");
 const exportPinError = ref(false);
@@ -361,6 +410,62 @@ onMounted(() => {
           <span class="text-cyan-voltGlow">→</span>
         </button>
       </section>
+
+      <!-- BIOMETRIC UNLOCK · native only -->
+      <section v-if="isNative" data-testid="biometric-card">
+        <span class="forge-label">{{ t('set.bio.title') }}</span>
+        <div class="forge-card p-3.5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-bone">{{ t('set.bio.title') }}</span>
+                <span
+                  class="text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border"
+                  :class="settings.biometricUnlock
+                    ? 'border-cyan-volt/60 text-cyan-voltGlow'
+                    : 'border-gunmetal-400 text-fiatDim'"
+                  data-testid="biometric-status-badge"
+                >
+                  {{ settings.biometricUnlock ? t('set.autoLockOn') : t('set.autoLockOff') }}
+                </span>
+              </div>
+              <p class="text-[11px] text-fiatDim leading-relaxed mt-1">
+                {{ bio.available ? t('set.bio.desc') : t('set.bio.unavailable') }}
+              </p>
+            </div>
+            <button
+              @click="toggleBiometric"
+              :disabled="!bio.available || bioBusy"
+              class="relative w-12 h-6 rounded-full transition-colors shrink-0 disabled:opacity-40"
+              :class="settings.biometricUnlock ? 'bg-[#E25822]' : 'bg-gunmetal-500'"
+              :aria-pressed="settings.biometricUnlock"
+              data-testid="biometric-toggle"
+            >
+              <span
+                class="absolute top-0.5 w-5 h-5 rounded-full bg-bone transition-all"
+                :class="settings.biometricUnlock ? 'left-[26px]' : 'left-0.5'"
+              />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Biometric PIN modal -->
+      <div
+        v-if="bioPinOpen"
+        class="fixed inset-0 z-50 bg-black/60 flex items-end px-3 py-3"
+        @click.self="bioPinOpen = false"
+        data-testid="biometric-pin-modal"
+      >
+        <div class="forge-card p-4 w-full">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-semibold text-bone">{{ t('set.bio.confirmPin') }}</p>
+            <button @click="bioPinOpen = false" class="text-fiatDim hover:text-rust text-xs" data-testid="biometric-pin-cancel">✕</button>
+          </div>
+          <p class="text-[11px] text-fiatDim leading-relaxed mb-3">{{ t('set.bio.confirmDesc') }}</p>
+          <PinPad v-model="bioPin" :length="6" :error="bioPinError" :disabled="bioBusy" @complete="onBioPinComplete" />
+        </div>
+      </div>
 
       <!-- AUTO-LOCK · idle-timer security -->
       <!--

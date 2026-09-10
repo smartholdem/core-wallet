@@ -18,8 +18,10 @@ import { VitePWA } from "vite-plugin-pwa";
 // Chrome/Firefox extension targets use the *separate* vite.config.extension.ts.
 export default defineConfig(({ mode }) => {
   const IS_PWA = mode === "pwa";
-  // Динамически переключаем папку вывода: для PWA используем dist-pwa
-  const outDir = IS_PWA ? "apps/dist-pwa" : "dist";
+  const IS_ANDROID = mode === "android";
+  // apps/dist-pwa for the installable web app, apps/dist-android for the
+  // Capacitor webDir (no service worker — the native shell owns caching).
+  const outDir = IS_PWA ? "apps/dist-pwa" : IS_ANDROID ? "apps/dist-android" : "dist";
 
   return {
   plugins: [
@@ -141,6 +143,8 @@ export default defineConfig(({ mode }) => {
     },
   },
   build: {
+    target: "es2022",
+    target: "es2022",
     outDir: outDir,
     rollupOptions: {
       plugins: [rollupNodePolyFill()],

@@ -13,6 +13,7 @@ import Settings from "@/views/Settings.vue";
 import RevealKeys from "@/views/RevealKeys.vue";
 import Swap from "@/views/Swap.vue";
 import ConnectedSites from "@/views/ConnectedSites.vue";
+import DappBrowser from "@/views/DappBrowser.vue";
 
 const routes = [
   { path: "/", redirect: "/dashboard" },
@@ -26,6 +27,7 @@ const routes = [
   { path: "/swap", component: Swap },
   { path: "/history", component: History },
   { path: "/connected-sites", component: ConnectedSites },
+  { path: "/dapps", component: DappBrowser },
   { path: "/settings", component: Settings },
   { path: "/settings/keys", component: RevealKeys },
 ];

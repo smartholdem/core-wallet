@@ -19,6 +19,7 @@ import { useRouter } from "vue-router";
 import TopBar from "@/components/TopBar.vue";
 import BottomDock from "@/components/BottomDock.vue";
 import { pushToast } from "@/lib/utils";
+import { getAuthorizedOrigins, removeAuthorizedOrigin } from "@/lib/origins";
 import { useT } from "@/locales";
 
 const router = useRouter();
@@ -29,24 +30,15 @@ const loadingOrigins = ref(false);
 
 function loadConnectedOrigins() {
   loadingOrigins.value = true;
-  if (typeof chrome === "undefined" || !chrome.storage?.local) {
-    connectedOrigins.value = [];
-    loadingOrigins.value = false;
-    return;
-  }
-  chrome.storage.local.get("authorizedOrigins", (res: any) => {
-    connectedOrigins.value = Array.isArray(res?.authorizedOrigins)
-      ? res.authorizedOrigins
-      : [];
+  getAuthorizedOrigins().then((list) => {
+    connectedOrigins.value = list;
     loadingOrigins.value = false;
   });
 }
 
 function disconnectOrigin(origin: string) {
-  if (typeof chrome === "undefined" || !chrome.storage?.local) return;
-  const next = connectedOrigins.value.filter((o) => o !== origin);
-  chrome.storage.local.set({ authorizedOrigins: next }, () => {
-    connectedOrigins.value = next;
+  removeAuthorizedOrigin(origin).then(() => {
+    connectedOrigins.value = connectedOrigins.value.filter((o) => o !== origin);
     pushToast(`Disconnected ${prettyHost(origin)}`, "success");
   });
 }

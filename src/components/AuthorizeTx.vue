@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { completeAuthorize } from "@/lib/dappBus";
 /* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 import { ref, computed } from "vue";
 import axios from "axios";
@@ -43,14 +44,7 @@ const primaryCtaLabel = computed(() =>
 function rejectAndDismiss() {
   if (broadcasting.value) return; // ignore close during in-flight broadcast
   pushToast("Transaction rejected", "info");
-  if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
-    chrome.runtime.sendMessage({
-      type: "UI_AUTHORIZE_COMPLETE",
-      requestId: req.value?.id,
-      approved: false,
-      error: "User rejected the transaction.",
-    });
-  }
+  sendUiComplete(false, null, "User rejected the transaction.");
   intent.clearSign();
   pinOpen.value = false;
 }
@@ -66,14 +60,7 @@ function startConfirm() {
 }
 
 function sendUiComplete(approved: boolean, payload: any, error?: string) {
-  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
-  chrome.runtime.sendMessage({
-    type: "UI_AUTHORIZE_COMPLETE",
-    requestId: req.value?.id,
-    approved,
-    payload,
-    error,
-  });
+  void completeAuthorize(req.value?.id, approved, payload, error);
 }
 
 /**
