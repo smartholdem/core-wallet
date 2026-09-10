@@ -1,9 +1,9 @@
 /**
- * pack-source.mjs - reviewer source archive for AMO.
+ * pack-source.mjs — reviewer source archive for AMO.
  *
  * Mozilla requires a source-code archive for minified/bundled add-ons. This
  * script zips EXACTLY the files a reviewer needs to run
- * `yarn install --frozen-lockfile && yarn build:firefox` - nothing else
+ * `yarn install --frozen-lockfile && yarn build:firefox` — nothing else
  * (no node_modules, no build output, no .env, no signing keys).
  *
  * Output: apps/extension/smartholdem-wallet-source-<version>.zip
@@ -47,8 +47,9 @@ const FILES = [
   "tailwind.config.js",
   "postcss.config.js",
   "README.md",
+  "README_RU.md",
   "LICENSE",
-  "AMO_REVIEWER_BUILD.md",
+  "docs/AMO_REVIEWER_BUILD.md",
 ];
 const IGNORE = /(^|\/)(\.DS_Store|Thumbs\.db|.*\.map)$/;
 

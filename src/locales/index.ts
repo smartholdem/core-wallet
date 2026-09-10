@@ -25,7 +25,7 @@ const en: Dict = {
   "dapps.title": "dApp Browser",
   "dapps.intro": "Open SmartHoldem dApps inside the wallet. Sites get window.smartholdem and every request is confirmed here.",
   "dapps.resume": "Return to",
-  "dapps.placeholder": "poker.smartholdem.io",
+  "dapps.placeholder": "app.smartholdem.io",
   "dapps.open": "Open",
   "dapps.featured": "Featured",
   "dapps.recent": "Recent",
@@ -126,7 +126,7 @@ const en: Dict = {
   "send.amount": "Amount (STH)",
   "send.max": "MAX",
   "send.memo": "Vendor Field / MEMO",
-  "send.memoHelp": "Used for routing to poker rooms, exchanges & services.",
+  "send.memoHelp": "Used for routing to games, exchanges & services.",
   "send.fee": "Network Fee",
   "send.total": "Total debit",
   "send.invalidAddr": "Address checksum invalid.",
@@ -266,7 +266,7 @@ const ru: Dict = {
   "dapps.title": "Браузер dApp",
   "dapps.intro": "Открывайте dApp SmartHoldem внутри кошелька. Сайты получают window.smartholdem, каждый запрос подтверждается здесь.",
   "dapps.resume": "Вернуться к",
-  "dapps.placeholder": "poker.smartholdem.io",
+  "dapps.placeholder": "app.smartholdem.io",
   "dapps.open": "Открыть",
   "dapps.featured": "Рекомендуемые",
   "dapps.recent": "Недавние",
@@ -294,7 +294,7 @@ const ru: Dict = {
   "brand.tagline.2": "для горячей",
   "brand.tagline.3": "крипты.",
   "brand.subtitle":
-    "Брутальный STH-кошелёк для покера, платежей и полного суверенитета on-chain. Каждая подпись куётся локально - ключи не покидают локбокс.",
+    "Брутальный STH-кошелёк для игр, платежей и полного суверенитета on-chain. Каждая подпись куётся локально - ключи не покидают локбокс.",
 
   "welcome.create": "Сковать новый кошелёк",
   "welcome.restore_seed": "Восстановить из seed",
@@ -359,7 +359,7 @@ const ru: Dict = {
   "send.max": "МАКС",
   "send.memo": "Vendor Field / MEMO",
   "send.memoHelp":
-    "Используется для маршрутизации в покер-комнаты, биржи и сервисы.",
+    "Используется для маршрутизации в игры, биржи и сервисы.",
   "send.fee": "Сетевая комиссия",
   "send.total": "К списанию",
   "send.invalidAddr": "Чек-сумма адреса некорректна.",
@@ -500,7 +500,7 @@ const zh: Dict = {
   "brand.tagline.2": "为火热的",
   "brand.tagline.3": "加密资产。",
   "brand.subtitle":
-    "为扑克、支付以及完整链上主权而生的强硬派 STH 钱包。每一次签名都在本地铸造--您的密钥永远不会离开保险箱。",
+    "为游戏、支付以及完整链上主权而生的强硬派 STH 钱包。每一次签名都在本地铸造--您的密钥永远不会离开保险箱。",
 
   "welcome.create": "铸造新钱包",
   "welcome.restore_seed": "从助记词恢复",
@@ -563,7 +563,7 @@ const zh: Dict = {
   "send.amount": "金额 (STH)",
   "send.max": "最大",
   "send.memo": "Vendor Field / MEMO",
-  "send.memoHelp": "用于路由到扑克室、交易所与服务。",
+  "send.memoHelp": "用于路由到游戏、交易所与服务。",
   "send.fee": "网络费用",
   "send.total": "总扣款",
   "send.invalidAddr": "地址校验和无效。",
@@ -698,7 +698,7 @@ const es: Dict = {
   "brand.tagline.2": "para cripto",
   "brand.tagline.3": "ardiente.",
   "brand.subtitle":
-    "Una billetera STH brutalista para póker, pagos y pura soberanía on-chain. Cada firma se forja localmente - sus claves nunca abandonan la caja fuerte.",
+    "Una billetera STH brutalista para juegos, pagos y pura soberanía on-chain. Cada firma se forja localmente - sus claves nunca abandonan la caja fuerte.",
 
   "welcome.create": "Forjar una nueva billetera",
   "welcome.restore_seed": "Restaurar desde semilla",
@@ -765,7 +765,7 @@ const es: Dict = {
   "send.max": "MÁX",
   "send.memo": "Vendor Field / MEMO",
   "send.memoHelp":
-    "Usado para enrutamiento a salas de póker, exchanges y servicios.",
+    "Usado para enrutamiento a juegos, exchanges y servicios.",
   "send.fee": "Comisión de red",
   "send.total": "Débito total",
   "send.invalidAddr": "Checksum de dirección inválido.",

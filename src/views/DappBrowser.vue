@@ -13,7 +13,6 @@ const settings = useSettingsStore();
 const t = useT();
 
 const FEATURED = [
-  { name: "SmartHoldem Poker", url: "https://poker.smartholdem.io" },
   { name: "SmartHoldem Explorer", url: "https://explorer.smartholdem.io" },
   { name: "SmartHoldem.io", url: "https://smartholdem.io" },
 ];

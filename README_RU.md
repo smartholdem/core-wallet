@@ -12,7 +12,7 @@
 - **Восстановление из seed** - вставка мнемоники / приватного ключа, проверка через `Identities.Address.validate(addr, 63)`.
 - **Импорт зашифрованного `.sth`-бэкапа** - прямо из экрана Welcome или Settings.
 - **HD-мультиаккаунты** - путь BIP-44 `m/44'/111'/account'/0/0` через `@scure/bip32`. Account #0 совместим с passphrase-derivation wallet-pro.
-- **Переключатель аккаунтов** (`AccountSwitcher`) с балансами в реальном времени, копированием адреса и inline-переименованием (например, «Account 2» → «Poker Bankroll»).
+- **Переключатель аккаунтов** (`AccountSwitcher`) с балансами в реальном времени, копированием адреса и inline-переименованием (например, «Account 2» → «Gaming»).
 - **PIN-локбокс** (Gatekeeper) с подсветкой dots, анимацией Scan-line и брутальным numeric keypad.
 
 ### 1.2. Dashboard (Vault)
@@ -173,7 +173,7 @@ await window.smartholdem.signTransaction({
   amount: "5.5",
   recipientId: "SeZL...",
   fee: 0.25,
-  vendorField: "poker:room42:buyin"
+  vendorField: "order:42:deposit"
 });
 ```
 
@@ -213,7 +213,7 @@ const r = await window.smartholdem.sendTransaction({
   amount: 1,
   recipientId: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   fee: 0.25,
-  vendorField: "poker:room42:buyin"
+  vendorField: "order:42:deposit"
 });
 
 console.log("Tx ID:",   r.id);
@@ -456,7 +456,7 @@ window.__sthDevConnect({ origin: "https://smartholdem.io" });
 window.__sthDevSignTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
-  vendorField: "poker:room42",
+  vendorField: "order:42",
   origin: "https://smartholdem.io"
 });
 
@@ -464,7 +464,7 @@ window.__sthDevSignTx({
 window.__sthDevSendTx({
   recipient: "SeZLuyhhYf2qxs4ArPJ71oEu3x8EsVw51C",
   amount: 5,
-  vendorField: "poker:room42",
+  vendorField: "order:42",
   origin: "https://smartholdem.io"
 });
 
@@ -568,19 +568,19 @@ yarn build:extension
 ## 4. Почему этот кошелёк - лучший в экосистеме SmartHoldem
 
 1. **Индустриальный дизайн**. Никакого «AI-slop» - Gunmetal #121315, Rust Orange #E25822, Volt Cyan #06B6D4, JetBrains Mono для адресов и балансов. Две темы переключаются мгновенно через CSS-переменные.
-2. **Side Panel-first**. В отличие от обычных popup-кошельков, Core Wallet живёт в боковой панели и не сбрасывает state при переключении вкладок - критично для покер-комнат и dApp-сессий.
+2. **Side Panel-first**. В отличие от обычных popup-кошельков, Core Wallet живёт в боковой панели и не сбрасывает state при переключении вкладок - критично для игр и длительных dApp-сессий.
 3. **Полная совместимость с wallet-pro**. Та же криптография, тот же formats, та же логика swap-гейтов - мигрируете с любого устройства без потери адресов.
-4. **HD-мультиаккаунты + кастомные метки**. Один seed → бесконечно адресов; назовите их «Poker Bankroll», «Cold Storage», «Daily Spend» - метки сохраняются в зашифрованном бэкапе.
+4. **HD-мультиаккаунты + кастомные метки**. Один seed → бесконечно адресов; назовите их «Gaming», «Cold Storage», «Daily Spend» - метки сохраняются в зашифрованном бэкапе.
 5. **Нативный SWAP внутри кошелька**. Не нужно открывать сторонний сайт - Buy/Sell с per-account BEP20-депозитом, slippage-расчётами, polling-ом подтверждения.
 6. **Encrypted `.sth` vault**. Переносите весь кошелёк (seed + аккаунты + темы + ноды + PIN-hash) в один зашифрованный файл - Smart2FA-grade криптография.
-7. **Web3 provider для всей экосистемы**. `window.smartholdem.signMessage / requestSwap / signTransaction` - стандартизированный API для покер-комнат, казино, DEX-ов и любых dApp на STH.
+7. **Web3 provider для всей экосистемы**. `window.smartholdem.signMessage / requestSwap / signTransaction` - стандартизированный API для игр, DEX-ов и любых dApp на STH.
 
 ---
 
 ## 5. Планы по дальнейшему UX/UI улучшению
 
 1. **Push-уведомления** через Chrome Notifications API при входящих переводах (требует `notifications` permission).
-2. **Address Book** с поиском и тегами - особенно для частых получателей в покер-комнатах.
+2. **Address Book** с поиском и тегами - особенно для частых получателей в играх и сервисах.
 3. **«Hide balance»** жест (свайп по балансу) для приватности в публичных местах.
 4. **Биометрическая разблокировка** через WebAuthn для устройств с TouchID/Windows Hello - оставляя PIN как fallback.
 5. **Локализация**. Сейчас интерфейс EN/RU/ZH/ES-only; добавить остальные языки через `vue-i18n`.

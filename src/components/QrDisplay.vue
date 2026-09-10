@@ -8,11 +8,13 @@ const dataUrl = ref<string>("");
 
 async function render() {
   if (!props.value) return;
+  // Standard polarity (dark modules on light background) — ML Kit / ZXing do
+  // not decode inverted codes, so the theme lives in the frame, not the QR.
   dataUrl.value = await QRCode.toDataURL(props.value, {
     width: props.size ?? 224,
-    margin: 1,
+    margin: 2,
     errorCorrectionLevel: "M",
-    color: { dark: "#E6E7EA", light: "#0B0C0E" },
+    color: { dark: "#0B0C0E", light: "#F4F1EA" },
   });
 }
 

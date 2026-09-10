@@ -3,8 +3,8 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // Android / iOS wrapper around the same Vue bundle that ships as PWA.
 // Build: `yarn build:android` (vite --mode android → apps/dist-android → cap sync).
 const config: CapacitorConfig = {
-  appId: "io.smartholdem.wallet",
-  appName: "SmartHoldem Wallet",
+  appId: "cx.sth.wallet",
+  appName: "STH Wallet",
   webDir: "apps/dist-android",
   server: {
     androidScheme: "https",

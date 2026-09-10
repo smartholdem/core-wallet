@@ -1,6 +1,3 @@
-android/keys/
-test-wallet-data.txt
-*-wallet-data*.txt
 resources
 dist
 .idea
@@ -8,6 +5,13 @@ apps
 .env
 web-ext-artifacts
 amo-metadata.json
+*.keystore
+*.jks
+*.p12
+keystore.properties
+android/local.properties
+android/app/release/
+android/release.keystore
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

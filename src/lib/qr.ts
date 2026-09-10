@@ -53,7 +53,7 @@ export function canScanQr(): boolean {
 
 /** Opens the scanner; resolves with the decoded text or null when cancelled. */
 export async function scanQr(instructions: string): Promise<string | null> {
-  const { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } = await import(
+  const { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint, CapacitorBarcodeScannerAndroidScanningLibrary } = await import(
     "@capacitor/barcode-scanner"
   );
   try {
@@ -62,6 +62,7 @@ export async function scanQr(instructions: string): Promise<string | null> {
       scanInstructions: instructions,
       scanButton: false,
       cameraDirection: 1,
+      android: { scanningLibrary: CapacitorBarcodeScannerAndroidScanningLibrary.MLKIT },
     });
     return res?.ScanResult || null;
   } catch (e: any) {
