@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SmartHoldem Wallet</string>
+    <string name="title_activity_main">SmartHoldem Wallet</string>
+    <string name="package_name">io.smartholdem.wallet</string>
+    <string name="custom_url_scheme">io.smartholdem.wallet</string>
+</resources>
