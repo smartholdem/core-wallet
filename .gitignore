@@ -1,3 +1,6 @@
+android/keys/
+test-wallet-data.txt
+*-wallet-data*.txt
 resources
 dist
 .idea
