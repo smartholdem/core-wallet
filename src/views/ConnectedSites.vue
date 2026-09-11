@@ -63,10 +63,13 @@ onMounted(loadConnectedOrigins);
     >
       <button
         @click="router.push('/dashboard')"
-        class="text-[11px] uppercase tracking-[0.18em] text-fiat hover:text-bone"
+        class="w-8 h-8 -ml-1 grid place-items-center rounded-md text-fiat hover:text-bone hover:bg-gunmetal-700/60 transition-colors"
         data-testid="connected-sites-back-btn"
+        :aria-label="t('top.back')"
       >
-        ← {{ t('top.back') }}
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 5l-7 7 7 7" />
+        </svg>
       </button>
       <span class="text-[10px] uppercase tracking-[0.3em] text-fiat font-semibold">
         {{ t('apps.title') }}
@@ -79,7 +82,7 @@ onMounted(loadConnectedOrigins);
       >
         {{ loadingOrigins ? t('apps.loading') : t('apps.refresh') }}
       </button>
-      <span v-else class="w-16" />
+      <span v-else class="w-8" />
     </header>
 
     <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4" data-testid="connected-sites-card">

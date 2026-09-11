@@ -20,6 +20,15 @@ export const LOCALES: { code: Locale; label: string; flag: string }[] = [
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "nav.menu": "Menu",
+  "menu.title": "Menu",
+  "menu.settings": "Settings",
+  "menu.settingsHint": "Themes, language, auto-lock, backup",
+  "menu.access": "Access",
+  "menu.accessHint": "Connected apps & permissions",
+  "menu.dapps": "dApp Browser",
+  "menu.dappsHint": "Open SmartHoldem apps in-wallet",
+  "menu.lock": "Lock wallet",
   "ota.title": "App updates",
   "ota.bundle": "Bundle",
   "ota.check": "Check",
@@ -281,6 +290,15 @@ const en: Dict = {
 };
 
 const ru: Dict = {
+  "nav.menu": "Меню",
+  "menu.title": "Меню",
+  "menu.settings": "Настройки",
+  "menu.settingsHint": "Темы, язык, авто-блокировка, бэкап",
+  "menu.access": "Доступ",
+  "menu.accessHint": "Подключённые приложения и права",
+  "menu.dapps": "Браузер dApp",
+  "menu.dappsHint": "SmartHoldem-приложения внутри кошелька",
+  "menu.lock": "Заблокировать",
   "ota.title": "Обновления приложения",
   "ota.bundle": "Бандл",
   "ota.check": "Проверить",
@@ -528,6 +546,12 @@ const ru: Dict = {
 };
 
 const zh: Dict = {
+  "nav.menu": "菜单",
+  "menu.title": "菜单",
+  "menu.settings": "设置",
+  "menu.access": "访问权限",
+  "menu.dapps": "dApp 浏览器",
+  "menu.lock": "锁定钱包",
   "ota.title": "应用更新",
   "ota.check": "检查",
   "ota.updateNow": "立即更新",
@@ -731,6 +755,12 @@ const zh: Dict = {
 };
 
 const es: Dict = {
+  "nav.menu": "Menú",
+  "menu.title": "Menú",
+  "menu.settings": "Ajustes",
+  "menu.access": "Acceso",
+  "menu.dapps": "Navegador dApp",
+  "menu.lock": "Bloquear",
   "ota.title": "Actualizaciones",
   "ota.check": "Comprobar",
   "ota.updateNow": "Actualizar ahora",
