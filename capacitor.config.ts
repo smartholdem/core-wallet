@@ -16,6 +16,17 @@ const config: CapacitorConfig = {
       releaseType: "AAB",
     },
   },
+  plugins: {
+    // OTA from GitHub Releases (see src/lib/ota.ts). No Capgo cloud.
+    CapacitorUpdater: {
+      autoUpdate: false,
+      appReadyTimeout: 10000,
+      autoDeleteFailed: true,
+      autoDeletePrevious: true,
+      resetWhenUpdate: true,
+      directUpdate: false,
+    },
+  },
 };
 
 export default config;

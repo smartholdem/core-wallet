@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import pkg from "./package.json";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
@@ -56,6 +57,7 @@ export default defineConfig({
   define: {
     "process.env": {},
     global: "globalThis",
+    __APP_VERSION__: JSON.stringify(pkg.version),
   },
   build: {
     target: "es2022",

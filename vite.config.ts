@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import pkg from "./package.json";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
@@ -102,6 +103,7 @@ export default defineConfig(({ mode }) => {
   define: {
     "process.env": {},
     global: "globalThis",
+    __APP_VERSION__: JSON.stringify(pkg.version),
   },
   server: {
     host: "0.0.0.0",

@@ -936,6 +936,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/keyboard/-/keyboard-8.0.5.tgz#7ec60f27749b04aeba16f7ec232e7947f4e59f94"
   integrity sha512-oFXygC4eKYA5l2MdpTR06L2M/4x6e2SLD5yS1T9+UBDKTkzyvhWKEhbYLUaTIBPpLKqlfGudJw1X73S1H9eUzQ==
 
+"@capgo/capacitor-updater@8":
+  version "8.51.15"
+  resolved "https://registry.yarnpkg.com/@capgo/capacitor-updater/-/capacitor-updater-8.51.15.tgz#f5d76c19b10c4c71127d31621c0feeae27c43e39"
+  integrity sha512-eJxQrwMYjlaRY79r+1jJWzetgqeyVdXkkHTngVLVQq3/1BK6itOkO45wRzyFrrB9WZD84fY1ziGp8ItGCN3hWA==
+
 "@capgo/inappbrowser@8":
   version "8.6.14"
   resolved "https://registry.yarnpkg.com/@capgo/inappbrowser/-/inappbrowser-8.6.14.tgz#53a45a1a4be07cb473095fd9a4827cf99b0353ef"

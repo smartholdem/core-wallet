@@ -20,6 +20,26 @@ export const LOCALES: { code: Locale; label: string; flag: string }[] = [
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "ota.title": "App updates",
+  "ota.bundle": "Bundle",
+  "ota.check": "Check",
+  "ota.checking": "Checking…",
+  "ota.available": "Version available:",
+  "ota.updateNow": "Update now",
+  "ota.nextLaunch": "On next launch",
+  "ota.downloading": "Downloading…",
+  "ota.ready": "Ready to install:",
+  "ota.restartNow": "Restart now",
+  "ota.nativeRequired": "New APK required for",
+  "ota.nativeRequiredDesc": "This release changes the native app. Download and install the APK over the current one (same signature, data is kept).",
+  "ota.downloadApk": "Download APK",
+  "ota.upToDate": "You are on the latest version.",
+  "ota.badge.new": "Update",
+  "ota.badge.ready": "Ready",
+  "ota.badge.error": "Error",
+  "ota.badge.ok": "Latest",
+  "ota.toast.available": "Update available — Settings → App updates ·",
+  "ota.toast.native": "A new APK is available — see Settings → App updates",
   "nav.dapps": "dApps",
   "dapps.kicker": "Web3",
   "dapps.title": "dApp Browser",
@@ -261,6 +281,26 @@ const en: Dict = {
 };
 
 const ru: Dict = {
+  "ota.title": "Обновления приложения",
+  "ota.bundle": "Бандл",
+  "ota.check": "Проверить",
+  "ota.checking": "Проверка…",
+  "ota.available": "Доступна версия:",
+  "ota.updateNow": "Обновить сейчас",
+  "ota.nextLaunch": "При следующем запуске",
+  "ota.downloading": "Загрузка…",
+  "ota.ready": "Готово к установке:",
+  "ota.restartNow": "Перезапустить",
+  "ota.nativeRequired": "Нужен новый APK для",
+  "ota.nativeRequiredDesc": "В этом релизе менялась нативная часть. Скачайте и установите APK поверх текущего (та же подпись, данные сохраняются).",
+  "ota.downloadApk": "Скачать APK",
+  "ota.upToDate": "Установлена последняя версия.",
+  "ota.badge.new": "Обновление",
+  "ota.badge.ready": "Готово",
+  "ota.badge.error": "Ошибка",
+  "ota.badge.ok": "Актуально",
+  "ota.toast.available": "Доступно обновление — Настройки → Обновления ·",
+  "ota.toast.native": "Доступен новый APK — см. Настройки → Обновления",
   "nav.dapps": "dApps",
   "dapps.kicker": "Web3",
   "dapps.title": "Браузер dApp",
@@ -488,6 +528,11 @@ const ru: Dict = {
 };
 
 const zh: Dict = {
+  "ota.title": "应用更新",
+  "ota.check": "检查",
+  "ota.updateNow": "立即更新",
+  "ota.nextLaunch": "下次启动时",
+  "ota.downloadApk": "下载 APK",
   "nav.dapps": "dApp",
   "dapps.title": "dApp 浏览器",
   "dapps.open": "打开",
@@ -686,6 +731,11 @@ const zh: Dict = {
 };
 
 const es: Dict = {
+  "ota.title": "Actualizaciones",
+  "ota.check": "Comprobar",
+  "ota.updateNow": "Actualizar ahora",
+  "ota.nextLaunch": "En el próximo inicio",
+  "ota.downloadApk": "Descargar APK",
   "nav.dapps": "dApps",
   "dapps.title": "Navegador dApp",
   "dapps.open": "Abrir",

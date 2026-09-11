@@ -1,12 +1,15 @@
 /* oxlint-disable no-undef -- `chrome` is the WebExtension runtime global */
 import "./lib/polyfills";
-import { createApp, watchEffect } from "vue";
+import { createApp, watchEffect, watch } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import App from "./App.vue";
 import { router } from "./router";
 import { useIntentStore } from "@/stores/intent";
 import { useAuthStore } from "@/stores/auth";
+import { useSettingsStore } from "@/stores/settings";
+import { pushToast } from "@/lib/utils";
+import { tStatic } from "@/locales";
 import { isExtension, isStandalonePWA, isNativeApp, surfaceLabel } from "@/lib/runtime";
 import { hydrateNativeVault } from "@/lib/storage";
 import "./style.css";
@@ -60,6 +63,7 @@ requestAnimationFrame(dismissBootSplash);
  */
 const intent = useIntentStore();
 const auth = useAuthStore();
+const settings = useSettingsStore();
 
 function applyIntent(method: string, params: any) {
   if (method === "requestSwap") {
@@ -117,6 +121,20 @@ if (isExtension() && chrome.runtime?.onMessage) {
     // Forward the request id and origin so the modal can resolve through
     // UI_AUTHORIZE_COMPLETE with the correct key.
     applyIntent(method, { ...(params || {}), __id: id, origin });
+  });
+}
+
+// Android/iOS: OTA bundle updates from GitHub Releases.
+if (isNativeApp()) {
+  import("@/lib/ota").then(({ initOta, ota }) => {
+    initOta();
+    watch(
+      () => ota.status,
+      (st) => {
+        if (st === "available") pushToast(`${tStatic("ota.toast.available", settings.locale as any)} v${ota.latest?.version}`, "info", 6000);
+        if (st === "native-required") pushToast(tStatic("ota.toast.native", settings.locale as any), "info", 6000);
+      },
+    );
   });
 }
 

@@ -13,6 +13,7 @@ import {
 } from "@/lib/vault";
 import BottomDock from "@/components/BottomDock.vue";
 import PinPad from "@/components/PinPad.vue";
+import OtaUpdate from "@/components/OtaUpdate.vue";
 import { useT } from "@/locales";
 import { isNativeApp } from "@/lib/runtime";
 import { biometryInfo, enableBiometricUnlock, disableBiometricUnlock } from "@/lib/secure";
@@ -410,6 +411,9 @@ onMounted(() => {
           <span class="text-cyan-voltGlow">→</span>
         </button>
       </section>
+
+      <!-- OTA UPDATES · native only -->
+      <OtaUpdate v-if="isNative" />
 
       <!-- BIOMETRIC UNLOCK · native only -->
       <section v-if="isNative" data-testid="biometric-card">
