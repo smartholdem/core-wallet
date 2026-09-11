@@ -82,12 +82,17 @@ export const syncStorage: Storage = {
 };
 
 // ── Native vault storage (Capacitor) ──────────────────────────────────────
-// On Android/iOS the encrypted vault lives in Keystore/Keychain-backed secure
-// storage instead of WebView localStorage. Pinia needs a sync Storage, so we
-// keep an in-memory mirror that is hydrated once before the app mounts.
+// On Android/iOS the encrypted vault is written to Keystore/Keychain-backed
+// secure storage AND mirrored in WebView localStorage (the vault is already
+// AES-256-GCM encrypted with the PIN, exactly like on the extension/PWA).
+// Keystore is the primary read source; the localStorage copy guarantees the
+// wallet survives a slow/failed Keystore read on cold start — losing the vault
+// is far worse than the marginal gain of Keystore-only storage.
+// Pinia needs a sync Storage, so an in-memory mirror is hydrated before mount.
 const isNative =
   !!(globalThis as any).Capacitor?.isNativePlatform?.() === true;
 const VAULT_KEYS = ["sth.auth"];
+const SECURE_READ_TIMEOUT = 10000;
 const nativeMirror: Record<string, string> = {};
 
 async function secure() {
@@ -95,26 +100,41 @@ async function secure() {
   return SecureStorage;
 }
 
+function localRead(k: string): string | null {
+  try {
+    return localStorage.getItem(k);
+  } catch {
+    return null;
+  }
+}
+
 export async function hydrateNativeVault() {
   if (!isNative) return;
-  const fallback = () => {
-    for (const k of VAULT_KEYS) {
-      const v = localStorage.getItem(k);
-      if (v) nativeMirror[k] = v;
-    }
-  };
+  const t0 = Date.now();
   let timer: any;
   const timeout = new Promise<never>((_, rej) => {
-    timer = setTimeout(() => rej(new Error("secure storage timeout")), 4000);
+    timer = setTimeout(() => rej(new Error(`secure storage timeout (${SECURE_READ_TIMEOUT} ms)`)), SECURE_READ_TIMEOUT);
   });
+  let secureOk = false;
   try {
     await Promise.race([hydrateFromSecure(), timeout]);
+    secureOk = true;
   } catch (e) {
-    console.warn("[SmartHoldem Wallet] secure storage unavailable, falling back to localStorage", e);
-    fallback();
+    console.warn("[SmartHoldem Wallet] secure storage read failed — using localStorage mirror", e);
   } finally {
     clearTimeout(timer);
   }
+  for (const k of VAULT_KEYS) {
+    if (nativeMirror[k] === undefined) {
+      const local = localRead(k);
+      if (local) {
+        nativeMirror[k] = local;
+        // heal the secure copy when Keystore was empty/unreadable
+        if (secureOk) secure().then((s) => s.set(k, local)).catch(() => {});
+      }
+    }
+  }
+  console.info(`[SmartHoldem Wallet] vault hydrated in ${Date.now() - t0} ms (secure=${secureOk}, keys=${Object.keys(nativeMirror).join(",") || "none"})`);
 }
 
 async function hydrateFromSecure() {
@@ -122,16 +142,7 @@ async function hydrateFromSecure() {
   for (const k of VAULT_KEYS) {
     let v = await s.get(k);
     if (typeof v !== "string" && v != null) v = JSON.stringify(v);
-    if (v == null) {
-      // one-time migration from WebView localStorage (Phase 1 builds)
-      const legacy = localStorage.getItem(k);
-      if (legacy) {
-        await s.set(k, legacy);
-        localStorage.removeItem(k);
-        v = legacy;
-      }
-    }
-    if (typeof v === "string") nativeMirror[k] = v;
+    if (typeof v === "string" && v) nativeMirror[k] = v;
   }
 }
 
@@ -150,14 +161,22 @@ const nativeVaultStorage: Storage = {
   },
   removeItem(key: string) {
     delete nativeMirror[key];
+    try {
+      localStorage.removeItem(key);
+    } catch {}
     secure().then((s) => s.remove(key)).catch(() => {});
   },
   setItem(key: string, value: string) {
     nativeMirror[key] = value;
-    secure().then((s) => s.set(key, value)).catch(() => localStorage.setItem(key, value));
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+    secure()
+      .then((s) => s.set(key, value))
+      .catch((e) => console.warn("[SmartHoldem Wallet] secure storage write failed", e));
   },
 };
 
-/** Storage for the encrypted vault: Keystore on native, localStorage elsewhere. */
+/** Storage for the encrypted vault: Keystore + localStorage mirror on native, localStorage elsewhere. */
 export const vaultStorage: Storage =
   isNative ? nativeVaultStorage : (typeof localStorage !== "undefined" ? localStorage : nativeVaultStorage);

@@ -28,6 +28,8 @@ async function tryBiometric() {
   try {
     const p = await biometricPin(t.value("set.bio.reason"), t.value("set.bio.title"));
     if (p) tryUnlock(p);
+  } catch (e: any) {
+    pushToast(`${e?.code ? e.code + " — " : ""}${e?.message || e}`, "error", 5000);
   } finally {
     bioBusy.value = false;
   }

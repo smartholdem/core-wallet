@@ -30,14 +30,29 @@ export async function secureRemove(key: string) {
 
 export interface BiometryInfo {
   available: boolean;
+  strong: boolean;
   type: string;
+  /** Plugin-supplied explanation when unavailable (e.g. nothing enrolled). */
+  reason: string;
+  code: string;
 }
 
+export class BiometricError extends Error {
+  code: string;
+  constructor(message: string, code: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
+const CANCEL_CODES = new Set(["userCancel", "systemCancel", "appCancel", "userFallback"]);
+
 export async function biometryInfo(): Promise<BiometryInfo> {
-  if (!isNativeApp()) return { available: false, type: "none" };
+  const none: BiometryInfo = { available: false, strong: false, type: "none", reason: "", code: "" };
+  if (!isNativeApp()) return none;
   try {
     const { BiometricAuth, BiometryType } = await import("@aparajita/capacitor-biometric-auth");
-    const r = await BiometricAuth.checkBiometry();
+    const r: any = await BiometricAuth.checkBiometry();
     const t = r.biometryType;
     const type =
       t === BiometryType.faceId || t === BiometryType.faceAuthentication
@@ -47,16 +62,27 @@ export async function biometryInfo(): Promise<BiometryInfo> {
           : t === BiometryType.irisAuthentication
             ? "iris"
             : "none";
-    return { available: !!r.isAvailable, type };
-  } catch {
-    return { available: false, type: "none" };
+    return {
+      available: !!r.isAvailable,
+      strong: !!r.strongBiometryIsAvailable,
+      type,
+      reason: String(r.reason || ""),
+      code: String(r.code || ""),
+    };
+  } catch (e: any) {
+    console.warn("[SmartHoldem Wallet] checkBiometry failed", e);
+    return { ...none, reason: String(e?.message || e), code: "pluginError" };
   }
 }
 
-/** Shows the OS biometric prompt; resolves true on success, false on cancel/failure. */
+/**
+ * Shows the OS biometric prompt. Resolves true on success, false when the
+ * user cancelled, and throws BiometricError for real failures so the UI can
+ * show the plugin's code/message (lockout, not enrolled, hardware…).
+ */
 export async function biometricPrompt(reason: string, title: string): Promise<boolean> {
+  const { BiometricAuth, AndroidBiometryStrength } = await import("@aparajita/capacitor-biometric-auth");
   try {
-    const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth");
     await BiometricAuth.authenticate({
       reason,
       androidTitle: title,
@@ -64,10 +90,13 @@ export async function biometricPrompt(reason: string, title: string): Promise<bo
       allowDeviceCredential: false,
       cancelTitle: "Cancel",
       androidConfirmationRequired: false,
+      androidBiometryStrength: AndroidBiometryStrength.weak,
     });
     return true;
-  } catch {
-    return false;
+  } catch (e: any) {
+    const code = String(e?.code || "");
+    if (CANCEL_CODES.has(code)) return false;
+    throw new BiometricError(String(e?.message || e || "Biometric authentication failed"), code || "unknown");
   }
 }
 

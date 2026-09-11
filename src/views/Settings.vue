@@ -46,7 +46,7 @@ const exporting = ref(false);
 
 // Biometric unlock (native only)
 const isNative = isNativeApp();
-const bio = ref<{ available: boolean; type: string }>({ available: false, type: "none" });
+const bio = ref<{ available: boolean; strong: boolean; type: string; reason: string; code: string }>({ available: false, strong: false, type: "none", reason: "", code: "" });
 const bioPinOpen = ref(false);
 const bioPin = ref("");
 const bioPinError = ref(false);
@@ -61,6 +61,10 @@ async function toggleBiometric() {
     settings.biometricUnlock = false;
     bioBusy.value = false;
     pushToast(t.value("set.bio.off"), "info");
+    return;
+  }
+  if (!bio.value.available) {
+    pushToast(bio.value.reason || t.value("set.bio.unavailable"), "error", 4000);
     return;
   }
   bioPin.value = "";
@@ -85,7 +89,7 @@ async function onBioPinComplete(v: string) {
       pushToast(t.value("set.bio.cancelled"), "error");
     }
   } catch (e: any) {
-    pushToast(e?.message || t.value("set.bio.failed"), "error");
+    pushToast(`${t.value("set.bio.failed")}: ${e?.code ? e.code + " — " : ""}${e?.message || e}`, "error", 5000);
   } finally {
     bioBusy.value = false;
   }
@@ -433,13 +437,13 @@ onMounted(() => {
                   {{ settings.biometricUnlock ? t('set.autoLockOn') : t('set.autoLockOff') }}
                 </span>
               </div>
-              <p class="text-[11px] text-fiatDim leading-relaxed mt-1">
-                {{ bio.available ? t('set.bio.desc') : t('set.bio.unavailable') }}
+              <p class="text-[11px] text-fiatDim leading-relaxed mt-1" data-testid="biometric-desc">
+                {{ bio.available ? t('set.bio.desc') : (bio.reason || t('set.bio.unavailable')) }}
               </p>
             </div>
             <button
               @click="toggleBiometric"
-              :disabled="!bio.available || bioBusy"
+              :disabled="bioBusy"
               class="relative w-12 h-6 rounded-full transition-colors shrink-0 disabled:opacity-40"
               :class="settings.biometricUnlock ? 'bg-[#E25822]' : 'bg-gunmetal-500'"
               :aria-pressed="settings.biometricUnlock"
