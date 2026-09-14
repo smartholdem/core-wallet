@@ -35,6 +35,10 @@ export const useSettingsStore = defineStore("appSettings", {
     biometricUnlock: false,
     /** Native only: dApp URLs opened in the in-app browser (most recent first). */
     recentDapps: [] as string[],
+    /** Address book. */
+    contacts: [] as { name: string; address: string }[],
+    /** Native only: lock as soon as the app goes to background. */
+    lockOnBackground: true,
     nodes: [...DEFAULT_NODES],
     activeNode: "node0.smartholdem.io",
     nodesStatus: [] as NodeStatus[],

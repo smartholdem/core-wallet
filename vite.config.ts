@@ -146,7 +146,6 @@ export default defineConfig(({ mode }) => {
   },
   build: {
     target: "es2022",
-    target: "es2022",
     outDir: outDir,
     rollupOptions: {
       plugins: [rollupNodePolyFill()],

@@ -95,9 +95,14 @@ const VAULT_KEYS = ["sth.auth"];
 const SECURE_READ_TIMEOUT = 10000;
 const nativeMirror: Record<string, string> = {};
 
+// See secure.ts: never return the plugin proxy itself from an async function.
 async function secure() {
   const { SecureStorage } = await import("@aparajita/capacitor-secure-storage");
-  return SecureStorage;
+  return {
+    get: (k: string) => SecureStorage.get(k),
+    set: (k: string, v: string) => SecureStorage.set(k, v),
+    remove: (k: string) => SecureStorage.remove(k),
+  };
 }
 
 function localRead(k: string): string | null {

@@ -458,6 +458,25 @@ onMounted(() => {
         </div>
       </section>
 
+      <!-- LOCK ON BACKGROUND · native only -->
+      <section v-if="isNative" data-testid="lock-bg-card">
+        <div class="forge-card p-3.5 flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <span class="text-sm font-semibold text-bone">{{ t('set.lockBg.title') }}</span>
+            <p class="text-[11px] text-fiatDim leading-relaxed mt-1">{{ t('set.lockBg.desc') }}</p>
+          </div>
+          <button
+            @click="settings.lockOnBackground = !settings.lockOnBackground"
+            class="relative w-12 h-6 rounded-full transition-colors shrink-0"
+            :class="settings.lockOnBackground ? 'bg-[#E25822]' : 'bg-gunmetal-500'"
+            :aria-pressed="settings.lockOnBackground"
+            data-testid="lock-bg-toggle"
+          >
+            <span class="absolute top-0.5 w-5 h-5 rounded-full bg-bone transition-all" :class="settings.lockOnBackground ? 'left-[26px]' : 'left-0.5'" />
+          </button>
+        </div>
+      </section>
+
       <!-- Biometric PIN modal -->
       <div
         v-if="bioPinOpen"

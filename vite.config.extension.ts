@@ -61,7 +61,9 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
-    target: "es2022",
+    // Extension pages: no <link rel="modulepreload"> — Chrome logs "cross-world
+    // extension resource mismatch" / unused-preload warnings for lazy chunks.
+    modulePreload: false,
     outDir: OUT_DIR,
     emptyOutDir: true,
     chunkSizeWarningLimit: 800,

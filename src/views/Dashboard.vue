@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from "vue";
+import { onMounted, computed, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useWalletStore } from "@/stores/wallet";
@@ -10,12 +10,40 @@ import TxRow from "@/components/TxRow.vue";
 import AccountSwitcher from "@/components/AccountSwitcher.vue";
 import { formatSth, formatUsdt } from "@/lib/utils";
 import { useT } from "@/locales";
+import { haptic } from "@/lib/ui";
 
 const router = useRouter();
 const auth = useAuthStore();
 const wallet = useWalletStore();
 const exchange = useExchangeStore();
 const t = useT();
+
+// Pull-to-refresh (touch): drag the scroll container down from the top.
+const pull = ref(0);
+const pulling = ref(false);
+let pullY0 = 0;
+let pullArmed = false;
+function onPullStart(e: TouchEvent) {
+  const el = e.currentTarget as HTMLElement;
+  pullArmed = el.scrollTop <= 0;
+  pullY0 = e.touches[0].clientY;
+}
+function onPullMove(e: TouchEvent) {
+  if (!pullArmed || pulling.value) return;
+  pull.value = Math.min(96, Math.max(0, (e.touches[0].clientY - pullY0) * 0.6));
+}
+async function onPullEnd() {
+  if (!pullArmed) return;
+  pullArmed = false;
+  if (pull.value >= 56 && !pulling.value) {
+    pulling.value = true;
+    pull.value = 48;
+    haptic();
+    await refreshActive();
+    pulling.value = false;
+  }
+  pull.value = 0;
+}
 
 async function refreshActive() {
   if (!auth.address) return;
@@ -43,7 +71,22 @@ const recentTxs = computed(() => wallet.transactions.slice(0, 3));
   <div class="flex-1 flex flex-col min-h-0" data-testid="dashboard-view">
     <TopBar />
 
-    <div class="flex-1 overflow-y-auto px-4 py-4">
+    <div
+      class="flex-1 overflow-y-auto px-4 py-4 relative"
+      @touchstart.passive="onPullStart"
+      @touchmove.passive="onPullMove"
+      @touchend="onPullEnd"
+      data-testid="dashboard-scroll"
+    >
+      <div
+        class="flex items-center justify-center overflow-hidden transition-[height] duration-150"
+        :style="{ height: pull + 'px' }"
+        data-testid="pull-indicator"
+      >
+        <svg viewBox="0 0 24 24" class="w-4 h-4 text-cyan-voltGlow" :class="pulling ? 'animate-spin' : ''" :style="!pulling ? { transform: `rotate(${pull * 4}deg)` } : undefined" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 1 1-3-6.7M21 3v6h-6" />
+        </svg>
+      </div>
       <!-- Account switcher -->
       <AccountSwitcher class="mb-3" />
 

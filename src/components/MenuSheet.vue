@@ -1,5 +1,6 @@
 <script setup lang="ts">
 /* oxlint-disable no-undef -- __APP_VERSION__ is a Vite compile-time define; defineProps/defineEmits are Vue macros */
+import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useT } from "@/locales";
 import { useAuthStore } from "@/stores/auth";
@@ -13,6 +14,16 @@ const route = useRoute();
 const t = useT();
 const auth = useAuthStore();
 const appVersion = __APP_VERSION__;
+
+// swipe-down on the panel closes the sheet
+let y0 = 0;
+const dragY = ref(0);
+function onTouchStart(e: TouchEvent) { y0 = e.touches[0].clientY; dragY.value = 0; }
+function onTouchMove(e: TouchEvent) { dragY.value = Math.max(0, e.touches[0].clientY - y0); }
+function onTouchEnd() {
+  if (dragY.value > 80) emit("close");
+  dragY.value = 0;
+}
 
 interface MenuItem {
   id: string;
@@ -62,6 +73,10 @@ function pick(it: MenuItem) {
           class="sheet-panel relative bg-gunmetal-800 border-t border-gunmetal-400 rounded-t-2xl px-3 pt-2 pb-3 shadow-[0_-12px_40px_rgba(0,0,0,0.6)]"
           role="dialog"
           aria-modal="true"
+          :style="dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined"
+          @touchstart.passive="onTouchStart"
+          @touchmove.passive="onTouchMove"
+          @touchend="onTouchEnd"
         >
           <div class="w-10 h-1 rounded-full bg-gunmetal-400 mx-auto mb-3" />
           <div class="flex items-center justify-between px-2 mb-2">

@@ -7,6 +7,7 @@ import { pushToast, formatSth } from "@/lib/utils";
 import HoldButton from "@/components/HoldButton.vue";
 import BottomDock from "@/components/BottomDock.vue";
 import { canScanQr, scanQr, parsePaymentQr } from "@/lib/qr";
+import RecipientPicker from "@/components/RecipientPicker.vue";
 import { useT } from "@/locales";
 
 const router = useRouter();
@@ -18,6 +19,7 @@ const recipient = ref("");
 const amount = ref("");
 const memo = ref("");
 const canScan = canScanQr();
+const pickerOpen = ref(false);
 const scanning = ref(false);
 
 async function scan() {
@@ -116,12 +118,22 @@ function setMax() {
       <div>
         <div class="flex items-center justify-between">
           <label class="forge-label">Recipient STH Address</label>
+          <div class="flex items-center gap-3 mb-1.5">
+          <button
+            type="button"
+            @click="pickerOpen = true"
+            class="text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-bone flex items-center gap-1"
+            data-testid="pick-recipient-btn"
+          >
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></svg>
+            {{ t("book.pick") }}
+          </button>
           <button
             v-if="canScan"
             type="button"
             @click="scan"
             :disabled="scanning"
-            class="text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-bone disabled:opacity-40 flex items-center gap-1 mb-1.5"
+            class="text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-bone disabled:opacity-40 flex items-center gap-1"
             data-testid="scan-qr-btn"
           >
             <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2">
@@ -129,7 +141,9 @@ function setMax() {
             </svg>
             {{ t("send.scan") }}
           </button>
+          </div>
         </div>
+        <RecipientPicker :open="pickerOpen" :current="recipient" @close="pickerOpen = false" @pick="(a) => (recipient = a)" />
         <input
           v-model="recipient"
           spellcheck="false"

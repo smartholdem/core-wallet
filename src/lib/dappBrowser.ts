@@ -38,8 +38,8 @@ class DappBrowser {
     this.addressGetter = opts.address;
   }
 
-  private async load() {
-    if (this.plugin) return this.plugin;
+  private async load(): Promise<void> {
+    if (this.plugin) return;
     const mod = await import("@capgo/inappbrowser");
     this.plugin = mod.InAppBrowser;
     this.listeners = await Promise.all([
@@ -49,11 +49,11 @@ class DappBrowser {
       }),
       this.plugin.addListener("closeEvent", () => this.onClosed()),
     ]);
-    return this.plugin;
   }
 
   async open(url: string) {
-    const plugin = await this.load();
+    await this.load();
+    const plugin = this.plugin;
     if (this.viewId) await this.close();
     this.currentUrl = url;
     const res = await plugin.openWebView({

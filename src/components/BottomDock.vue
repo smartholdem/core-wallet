@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useT } from "@/locales";
 import MenuSheet from "@/components/MenuSheet.vue";
+import { menuOpen } from "@/lib/ui";
 
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +21,6 @@ interface DockItem {
 // VAULT: dashboard + every wallet sub-flow (Send / Receive / Swap)
 // LEDGER: history
 // MENU: bottom sheet (Settings, Access, dApps, Lock…)
-const menuOpen = ref(false);
 const items: DockItem[] = [
   {
     path: "/dashboard",

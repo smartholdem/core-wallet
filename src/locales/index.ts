@@ -20,6 +20,21 @@ export const LOCALES: { code: Locale; label: string; flag: string }[] = [
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "book.pick": "Contacts",
+  "book.contacts": "Contacts",
+  "book.recent": "Recent",
+  "book.add": "Add contact",
+  "book.name": "Name",
+  "book.save": "Save",
+  "book.cancel": "Cancel",
+  "book.remove": "Remove",
+  "book.invalid": "Enter a name and a valid STH address",
+  "book.exists": "This address is already saved",
+  "book.saved": "Contact saved",
+  "book.emptyContacts": "No contacts yet — tap + to add one",
+  "book.emptyRecent": "No outgoing transfers yet",
+  "set.lockBg.title": "Lock in background",
+  "set.lockBg.desc": "Lock the wallet the moment the app leaves the screen.",
   "nav.menu": "Menu",
   "menu.title": "Menu",
   "menu.settings": "Settings",
@@ -89,7 +104,7 @@ const en: Dict = {
   "welcome.create": "Create a new wallet",
   "welcome.restore_seed": "Restore from seed",
   "welcome.import_vault": "Import encrypted .sth vault",
-  "welcome.version": "v1.4.8 · Mainnet ready",
+  "welcome.version": "v1.4.9 · Mainnet ready",
 
   // Gatekeeper / PIN
   "lock.title": "LOCKBOX",
@@ -290,6 +305,21 @@ const en: Dict = {
 };
 
 const ru: Dict = {
+  "book.pick": "Контакты",
+  "book.contacts": "Контакты",
+  "book.recent": "Недавние",
+  "book.add": "Добавить контакт",
+  "book.name": "Имя",
+  "book.save": "Сохранить",
+  "book.cancel": "Отмена",
+  "book.remove": "Удалить",
+  "book.invalid": "Введите имя и корректный STH-адрес",
+  "book.exists": "Этот адрес уже сохранён",
+  "book.saved": "Контакт сохранён",
+  "book.emptyContacts": "Контактов пока нет — нажмите +",
+  "book.emptyRecent": "Исходящих переводов пока нет",
+  "set.lockBg.title": "Блокировать в фоне",
+  "set.lockBg.desc": "Блокировать кошелёк, как только приложение уходит с экрана.",
   "nav.menu": "Меню",
   "menu.title": "Меню",
   "menu.settings": "Настройки",
@@ -357,7 +387,7 @@ const ru: Dict = {
   "welcome.create": "Сковать новый кошелёк",
   "welcome.restore_seed": "Восстановить из seed",
   "welcome.import_vault": "Импорт зашифрованного .sth-бэкапа",
-  "welcome.version": "v1.4.8 · Mainnet готов",
+  "welcome.version": "v1.4.9 · Mainnet готов",
 
   "lock.title": "ЛОКБОКС",
   "lock.subtitle": "Введите PIN, чтобы выковать",
@@ -546,6 +576,11 @@ const ru: Dict = {
 };
 
 const zh: Dict = {
+  "book.pick": "联系人",
+  "book.contacts": "联系人",
+  "book.recent": "最近",
+  "book.save": "保存",
+  "set.lockBg.title": "后台锁定",
   "nav.menu": "菜单",
   "menu.title": "菜单",
   "menu.settings": "设置",
@@ -574,7 +609,7 @@ const zh: Dict = {
   "welcome.create": "铸造新钱包",
   "welcome.restore_seed": "从助记词恢复",
   "welcome.import_vault": "导入加密的 .sth 保险库",
-  "welcome.version": "v1.4.8 · 主网就绪",
+  "welcome.version": "v1.4.9 · 主网就绪",
 
   "lock.title": "保险箱",
   "lock.subtitle": "输入 PIN 以铸造",
@@ -755,6 +790,11 @@ const zh: Dict = {
 };
 
 const es: Dict = {
+  "book.pick": "Contactos",
+  "book.contacts": "Contactos",
+  "book.recent": "Recientes",
+  "book.save": "Guardar",
+  "set.lockBg.title": "Bloquear en segundo plano",
   "nav.menu": "Menú",
   "menu.title": "Menú",
   "menu.settings": "Ajustes",
@@ -783,7 +823,7 @@ const es: Dict = {
   "welcome.create": "Forjar una nueva billetera",
   "welcome.restore_seed": "Restaurar desde semilla",
   "welcome.import_vault": "Importar bóveda cifrada .sth",
-  "welcome.version": "v1.4.8 · Mainnet listo",
+  "welcome.version": "v1.4.9 · Mainnet listo",
 
   "lock.title": "CAJA FUERTE",
   "lock.subtitle": "Ingrese el PIN para forjar",

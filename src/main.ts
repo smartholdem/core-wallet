@@ -12,6 +12,7 @@ import { pushToast } from "@/lib/utils";
 import { tStatic } from "@/locales";
 import { isExtension, isStandalonePWA, isNativeApp, surfaceLabel } from "@/lib/runtime";
 import { hydrateNativeVault } from "@/lib/storage";
+import { installEdgeSwipeBack, handleHardwareBack } from "@/lib/ui";
 import "./style.css";
 
 // Native shell (Capacitor): drop the 400×720 "device frame" used by the web
@@ -121,6 +122,20 @@ if (isExtension() && chrome.runtime?.onMessage) {
     // Forward the request id and origin so the modal can resolve through
     // UI_AUTHORIZE_COMPLETE with the correct key.
     applyIntent(method, { ...(params || {}), __id: id, origin });
+  });
+}
+
+// Android/iOS: hardware back, background auto-lock, edge-swipe back.
+if (isNativeApp()) {
+  installEdgeSwipeBack(router);
+  import("@capacitor/app").then(({ App }) => {
+    App.addListener("backButton", () => handleHardwareBack(router, () => App.minimizeApp()));
+    App.addListener("appStateChange", ({ isActive }) => {
+      if (!isActive && settings.lockOnBackground && auth.hasWallet && !auth.isLocked) {
+        auth.lock();
+        router.replace("/lock");
+      }
+    });
   });
 }
 

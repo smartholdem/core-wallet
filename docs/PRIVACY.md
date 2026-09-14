@@ -1,6 +1,6 @@
 # Privacy Policy - SmartHoldem Wallet
 
-**Effective date:** 9 June 2026
+**Effective date:** 15 September 2026
 **Applies to:** SmartHoldem Wallet browser extension (Chrome / Firefox) and the SmartHoldem Wallet PWA ("the Wallet"), published by SmartHoldem Foundation ("we").
 
 ## 1. Summary
@@ -47,7 +47,7 @@ Any data you share with a dApp after approving it is governed by that dApp's own
 |---|---|
 | `storage` | Store the encrypted vault and settings locally |
 | `sidePanel` | Render the wallet UI in the browser side panel |
-| `activeTab`, `tabs` | Identify the origin of the tab making a dApp request and open the side panel for it; no browsing history is read or stored |
+| `activeTab` | Open the side panel for the current tab when you click the wallet icon; the origin of a dApp request comes from the request itself. No browsing history is read or stored |
 | Content scripts on all sites | Inject the passive `window.smartholdem` provider (see §4) |
 
 ## 6. Children

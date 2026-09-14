@@ -7,9 +7,15 @@ import { isNativeApp } from "@/lib/runtime";
  */
 const BIO_PIN_KEY = "sth.bio.pin";
 
+// Never `return` a Capacitor plugin proxy from an async function: promise
+// resolution probes `.then` and the proxy turns it into a failing native call.
 async function storage() {
   const { SecureStorage } = await import("@aparajita/capacitor-secure-storage");
-  return SecureStorage;
+  return {
+    get: (k: string) => SecureStorage.get(k),
+    set: (k: string, v: string) => SecureStorage.set(k, v),
+    remove: (k: string) => SecureStorage.remove(k),
+  };
 }
 
 export async function secureGet(key: string): Promise<string | null> {
@@ -108,6 +114,7 @@ export async function enableBiometricUnlock(pin: string, reason: string, title: 
 }
 
 export async function disableBiometricUnlock() {
+  if (!isNativeApp()) return;
   try {
     await secureRemove(BIO_PIN_KEY);
   } catch {}
