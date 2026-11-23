@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { useSettingsStore } from "@/stores/settings";
+import { explorerUrl } from "@/lib/network";
 import { copyToClipboard } from "@/lib/utils";
 import QrDisplay from "@/components/QrDisplay.vue";
 import BottomDock from "@/components/BottomDock.vue";
 
 const router = useRouter();
 const auth = useAuthStore();
+const settings = useSettingsStore();
 </script>
 
 <template>
@@ -52,6 +55,7 @@ const auth = useAuthStore();
             </span>
           </div>
         </button>
+        <a :href="explorerUrl(settings.activeNetwork.explorer, 'wallet', auth.address)" target="_blank" rel="noopener" class="block mt-3 text-center text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-cyan-volt" data-testid="receive-explorer-link">Explorer ↗</a>
       </div>
 
       <!--

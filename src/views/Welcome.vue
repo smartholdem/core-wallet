@@ -59,11 +59,16 @@ async function onPinComplete(v: string) {
       theme: payload.settings.theme ?? "rust",
       activeNode: payload.settings.activeNode ?? settings.activeNode,
       nodes: payload.settings.nodes ?? settings.nodes,
+      customNodes: payload.settings.customNodes ?? settings.customNodes,
+      nodeInfo: { ...settings.nodeInfo, ...(payload.settings.nodeInfo ?? {}) },
+      cryptoConfig: { ...settings.cryptoConfig, ...(payload.settings.cryptoConfig ?? {}) },
+      activeNetwork: payload.settings.activeNetwork ?? settings.activeNetwork,
       currency: payload.settings.currency ?? settings.currency,
       lockTimeoutSec: payload.settings.lockTimeoutSec ?? settings.lockTimeoutSec,
       pinHash: payload.settings.pinHash ?? "",
     });
     if (payload.wallet) wallet.hydrate(payload.wallet);
+    settings.bootstrapNetwork();
     settings.applyTheme();
     pushToast("Vault Restored", "success");
     pinOpen.value = false;

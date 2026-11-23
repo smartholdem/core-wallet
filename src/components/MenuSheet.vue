@@ -39,6 +39,7 @@ interface MenuItem {
 const items: MenuItem[] = [
   { id: "settings", labelKey: "menu.settings", hintKey: "menu.settingsHint", path: "/settings" },
   { id: "access", labelKey: "menu.access", hintKey: "menu.accessHint", path: "/connected-sites" },
+  { id: "nodes", labelKey: "menu.nodes", hintKey: "menu.nodesHint", path: "/nodes" },
   { id: "dapps", labelKey: "menu.dapps", hintKey: "menu.dappsHint", path: "/dapps", native: true },
   {
     id: "lock",
@@ -108,6 +109,11 @@ function pick(it: MenuItem) {
                   <template v-else-if="it.id === 'access'">
                     <rect x="3" y="11" width="18" height="10" rx="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4M12 15v2" />
+                  </template>
+                  <template v-else-if="it.id === 'nodes'">
+                    <rect x="3" y="4" width="18" height="6" rx="1.5" />
+                    <rect x="3" y="14" width="18" height="6" rx="1.5" />
+                    <path d="M7 7h.01M7 17h.01" />
                   </template>
                   <template v-else-if="it.id === 'dapps'">
                     <circle cx="12" cy="12" r="9" />

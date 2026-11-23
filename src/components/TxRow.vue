@@ -2,10 +2,13 @@
 /* oxlint-disable no-undef -- defineProps/defineEmits/withDefaults are Vue compiler macros */
 import { computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { useSettingsStore } from "@/stores/settings";
+import { explorerTxUrl } from "@/lib/network";
 import { formatSth, shortAddress, timeAgo } from "@/lib/utils";
 
 const props = defineProps<{ tx: any }>();
 const auth = useAuthStore();
+const settings = useSettingsStore();
 
 const isOut = computed(() => props.tx.sender === auth.address);
 const counter = computed(() =>
@@ -14,7 +17,7 @@ const counter = computed(() =>
 const explorerUrl = computed(
   // Explorer is a hashtag-routed SPA — the path MUST be prefixed with `#/`
   // or the page loads at the index without the tx detail panel.
-  () => `https://explorer.smartholdem.io/#/transaction/${props.tx.id}`,
+  () => explorerTxUrl(settings.activeNetwork.explorer, props.tx.id),
 );
 const time = computed(() => {
   if (props.tx.timestamp?.unix) return timeAgo(props.tx.timestamp.unix);

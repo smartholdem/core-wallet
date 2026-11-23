@@ -110,6 +110,9 @@ export default defineConfig(({ mode }) => {
     port: 3000,
     strictPort: true,
     allowedHosts: true,
+    watch: {
+      ignored: ["**/android/**", "**/apps/**", "**/docs/**", "**/.git/**"],
+    },
     hmr: {
       clientPort: 443,
       protocol: "wss",

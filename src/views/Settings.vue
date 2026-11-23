@@ -24,7 +24,6 @@ const auth = useAuthStore();
 const wallet = useWalletStore();
 const t = useT();
 
-const probing = ref(false);
 const showWipe = ref(false);
 
 /**
@@ -107,21 +106,6 @@ const importPinError = ref(false);
 const importing = ref(false);
 const dragging = ref(false);
 
-async function rescan() {
-  probing.value = true;
-  try {
-    await settings.updateNodes();
-    pushToast("Node pool refreshed", "success");
-  } finally {
-    probing.value = false;
-  }
-}
-
-function pickNode(node: string) {
-  settings.setActiveNode(node);
-  pushToast(`Switched to ${node}`, "success");
-}
-
 function pickTheme(t: "rust" | "cyan" | "light") {
   settings.setTheme(t);
   const label =
@@ -151,6 +135,10 @@ function snapshot() {
       theme: settings.theme,
       activeNode: settings.activeNode,
       nodes: settings.nodes,
+      customNodes: settings.customNodes,
+      nodeInfo: settings.nodeInfo,
+      cryptoConfig: settings.cryptoConfig,
+      activeNetwork: settings.activeNetwork,
       currency: settings.currency,
       lockTimeoutSec: settings.lockTimeoutSec,
       pinHash: settings.pinHash,
@@ -247,6 +235,10 @@ async function onImportPinComplete(v: string) {
       theme: payload.settings.theme ?? "rust",
       activeNode: payload.settings.activeNode ?? settings.activeNode,
       nodes: payload.settings.nodes ?? settings.nodes,
+      customNodes: payload.settings.customNodes ?? settings.customNodes,
+      nodeInfo: { ...settings.nodeInfo, ...(payload.settings.nodeInfo ?? {}) },
+      cryptoConfig: { ...settings.cryptoConfig, ...(payload.settings.cryptoConfig ?? {}) },
+      activeNetwork: payload.settings.activeNetwork ?? settings.activeNetwork,
       currency: payload.settings.currency ?? settings.currency,
       lockTimeoutSec: payload.settings.lockTimeoutSec ?? settings.lockTimeoutSec,
       pinHash: payload.settings.pinHash ?? "",
@@ -254,6 +246,7 @@ async function onImportPinComplete(v: string) {
     if (payload.wallet) {
       wallet.hydrate(payload.wallet);
     }
+    settings.bootstrapNetwork();
     settings.applyTheme();
     pushToast("Vault Restored", "success");
     importEnvelope.value = null;
@@ -272,9 +265,6 @@ async function onImportPinComplete(v: string) {
   }
 }
 
-onMounted(() => {
-  if (settings.nodesStatus.length === 0) rescan();
-});
 </script>
 
 <template>
@@ -701,52 +691,6 @@ onMounted(() => {
           />
         </div>
       </div>
-
-      <!-- Node pool -->
-      <section>
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="forge-label !mb-0">Mainnet Node Pool</span>
-          <button
-            @click="rescan"
-            class="text-[10px] uppercase tracking-[0.18em] text-cyan-voltGlow hover:text-cyan-volt"
-            data-testid="rescan-nodes-btn"
-          >
-            {{ probing ? "probing…" : "↻ rescan" }}
-          </button>
-        </div>
-
-        <div class="flex flex-col gap-1.5" data-testid="node-list">
-          <button
-            v-for="n in settings.nodesStatus.length ? settings.nodesStatus : settings.nodes.map(x => ({ node: x, latency: Infinity, synced: false, status: null }))"
-            :key="n.node"
-            @click="pickNode(n.node)"
-            class="flex items-center justify-between p-2.5 rounded border text-left transition-colors"
-            :class="
-              n.node === settings.activeNode
-                ? 'border-indigo-forge/60 bg-indigo-forge/10 shadow-glowIndigo'
-                : 'border-gunmetal-400 bg-gunmetal-700 hover:border-gunmetal-300'
-            "
-            :data-testid="`node-${n.node}`"
-          >
-            <div class="flex items-center gap-2">
-              <span
-                class="inline-block w-1.5 h-1.5 rounded-full"
-                :class="
-                  n.synced
-                    ? 'bg-indigo-forgeBright'
-                    : isFinite(n.latency)
-                    ? 'bg-rust'
-                    : 'bg-gunmetal-300'
-                "
-              />
-              <span class="mono text-xs text-fiat">{{ n.node }}</span>
-            </div>
-            <span class="mono text-[10px] text-fiatDim">
-              {{ isFinite(n.latency) ? `${n.latency}ms` : "—" }}
-            </span>
-          </button>
-        </div>
-      </section>
 
       <!-- Wipe -->
       <section>

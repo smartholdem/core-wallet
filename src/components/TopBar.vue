@@ -13,9 +13,11 @@ const settings = useSettingsStore();
 const t = useT();
 
 const networkLabel = computed(() => {
-  const base = t.value("net.mainnet");
+  const base = settings.isMainnet
+    ? `${t.value("net.mainnet")} · ${settings.token}`
+    : `${settings.networkName.toUpperCase()} · ${settings.token}`;
   if (settings.activeNodeStatus) {
-    const h = settings.activeNodeStatus?.blockchain?.block?.height;
+    const h = settings.activeNodeStatus?.now ?? settings.activeNodeStatus?.blockchain?.block?.height;
     return h ? `${base} · #${h.toLocaleString()}` : base;
   }
   return base;

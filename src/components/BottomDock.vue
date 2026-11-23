@@ -13,7 +13,7 @@ interface DockItem {
   path: string;
   /** Translation key — looked up at render time so the label reacts to locale changes. */
   labelKey: string;
-  icon: "vault" | "ledger" | "menu";
+  icon: "vault" | "tokens" | "ledger" | "menu";
   /** All sub-routes that should keep this item highlighted. */
   matches: (p: string) => boolean;
 }
@@ -32,6 +32,7 @@ const items: DockItem[] = [
       p.startsWith("/receive") ||
       p.startsWith("/swap"),
   },
+  { path: "/tokens", labelKey: "nav.tokens", icon: "tokens", matches: (p) => p.startsWith("/tokens") },
   { path: "/history", labelKey: "nav.ledger", icon: "ledger", matches: (p) => p.startsWith("/history") },
   {
     path: "#menu",
@@ -85,6 +86,18 @@ function go(it: DockItem) {
         <rect x="3" y="5" width="18" height="14" rx="1.5" />
         <circle cx="12" cy="12" r="3" />
         <path d="M12 9v-2M12 17v-2M9 12h-2M17 12h-2" />
+      </svg>
+      <svg
+        v-else-if="it.icon === 'tokens'"
+        viewBox="0 0 24 24"
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <circle cx="9" cy="10" r="5.5" />
+        <path d="M14.5 7.2a5.5 5.5 0 1 1-2.3 10.3" />
+        <path d="M7 10h4M9 8v4" />
       </svg>
       <svg
         v-else-if="it.icon === 'ledger'"

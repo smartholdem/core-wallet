@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useWalletStore } from "@/stores/wallet";
 import { useExchangeStore } from "@/stores/exchange";
+import { useSettingsStore } from "@/stores/settings";
 import TopBar from "@/components/TopBar.vue";
 import BottomDock from "@/components/BottomDock.vue";
 import TxRow from "@/components/TxRow.vue";
@@ -16,6 +17,7 @@ const router = useRouter();
 const auth = useAuthStore();
 const wallet = useWalletStore();
 const exchange = useExchangeStore();
+const settings = useSettingsStore();
 const t = useT();
 
 // Pull-to-refresh (touch): drag the scroll container down from the top.
@@ -124,11 +126,11 @@ const recentTxs = computed(() => wallet.transactions.slice(0, 3));
           >
             {{ formatSth(balance, 4) }}
           </span>
-          <span class="text-sm mono text-fiat">STH</span>
+          <span class="text-sm mono text-fiat" data-testid="balance-token">{{ settings.token }}</span>
         </div>
 
-        <!-- Fiat row — high-contrast bright text -->
-        <div class="relative mt-3 flex items-center gap-2 text-xs">
+        <!-- Fiat row — high-contrast bright text (mainnet only: exchange quotes STH) -->
+        <div v-if="settings.isMainnet" class="relative mt-3 flex items-center gap-2 text-xs">
           <span
             class="mono text-base font-semibold text-fiat"
             data-testid="fiat-value"
@@ -149,7 +151,7 @@ const recentTxs = computed(() => wallet.transactions.slice(0, 3));
       </section>
 
       <!-- Quick Action Dock -->
-      <section class="grid grid-cols-4 gap-2 mt-4" data-testid="quick-actions">
+      <section class="grid gap-2 mt-4" :class="settings.isMainnet ? 'grid-cols-4' : 'grid-cols-3'" data-testid="quick-actions">
         <button
           @click="router.push('/send')"
           class="forge-btn-primary h-16 flex-col gap-1 px-1"
@@ -171,6 +173,7 @@ const recentTxs = computed(() => wallet.transactions.slice(0, 3));
           <span class="text-[10px] uppercase tracking-[0.15em]">{{ t('action.receive') }}</span>
         </button>
         <button
+          v-if="settings.isMainnet"
           @click="router.push('/swap')"
           class="forge-btn-primary h-16 flex-col gap-1 px-1"
           data-testid="action-swap"

@@ -10,13 +10,18 @@ const config: CapacitorConfig = {
     androidScheme: "https",
   },
   android: {
-    allowMixedContent: false,
+    allowMixedContent: true,
     backgroundColor: "#121315",
     buildOptions: {
       releaseType: "AAB",
     },
   },
   plugins: {
+    // Route fetch/XHR through the native layer: personal nodes without CORS
+    // headers and plain-http LAN relays work inside the app.
+    CapacitorHttp: {
+      enabled: true,
+    },
     // OTA from GitHub Releases (see src/lib/ota.ts). No Capgo cloud.
     CapacitorUpdater: {
       autoUpdate: false,

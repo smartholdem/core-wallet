@@ -59,7 +59,7 @@
   window.smartholdem = {
     isSmartHoldem: true,
     isMobile: true,
-    version: "1.4.9",
+    version: "1.5.0",
     network: "mainnet",
     getAccount: function () { return request("getAccount", {}); },
     signMessage: function (message) { return request("signMessage", { message: message }); },

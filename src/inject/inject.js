@@ -9,7 +9,7 @@
  *
  * Exposed API:
  *   window.smartholdem.isSmartHoldem               // true
- *   window.smartholdem.version                     // "1.4.9"
+ *   window.smartholdem.version                     // "1.5.0"
  *   window.smartholdem.network                     // "mainnet"
  *   window.smartholdem.getAccount()                // → { address }
  *   window.smartholdem.signMessage(message)        // → { signature, ... }
@@ -59,7 +59,7 @@
 
   window.smartholdem = {
     isSmartHoldem: true,
-    version: "1.4.9",
+    version: "1.5.0",
     network: "mainnet",
 
     /** Request the user's active STH address. */

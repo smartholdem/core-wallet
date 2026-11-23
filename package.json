@@ -1,6 +1,6 @@
 {
   "name": "smarthodlem-core-wallet",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "description": "SmartHoldem (STH) Browser Extension Wallet - Core Edition",
   "type": "module",
   "engines": {

@@ -14,6 +14,10 @@ import RevealKeys from "@/views/RevealKeys.vue";
 import Swap from "@/views/Swap.vue";
 import ConnectedSites from "@/views/ConnectedSites.vue";
 import DappBrowser from "@/views/DappBrowser.vue";
+import NodesPool from "@/views/NodesPool.vue";
+import Tokens from "@/views/Tokens.vue";
+import TokenDetail from "@/views/TokenDetail.vue";
+import TokenCreate from "@/views/TokenCreate.vue";
 
 const routes = [
   { path: "/", redirect: "/dashboard" },
@@ -28,6 +32,10 @@ const routes = [
   { path: "/history", component: History },
   { path: "/connected-sites", component: ConnectedSites },
   { path: "/dapps", component: DappBrowser },
+  { path: "/nodes", component: NodesPool },
+  { path: "/tokens", component: Tokens },
+  { path: "/tokens/create", component: TokenCreate },
+  { path: "/tokens/:id", component: TokenDetail },
   { path: "/settings", component: Settings },
   { path: "/settings/keys", component: RevealKeys },
 ];

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { pushToast } from "@/lib/utils";
 import PinPad from "@/components/PinPad.vue";
+import HoldButton from "@/components/HoldButton.vue";
 import LanguageDropdown from "@/components/LanguageDropdown.vue";
 import { useT } from "@/locales";
 import { onMounted } from "vue";
@@ -18,6 +19,19 @@ const t = useT();
 const pin = ref("");
 const error = ref(false);
 const attempts = ref(0);
+
+// "Forgot PIN?" → full wipe (irreversible; only the seed phrase can restore)
+const resetOpen = ref(false);
+const resetAck = ref(false);
+function openReset() {
+  resetAck.value = false;
+  resetOpen.value = true;
+}
+function doReset() {
+  auth.wipe();
+  resetOpen.value = false;
+  router.replace("/welcome");
+}
 const settings = useSettingsStore();
 const bioAvailable = isNativeApp() && settings.biometricUnlock;
 const bioBusy = ref(false);
@@ -134,13 +148,75 @@ const bullets = [
         {{ t("lock.biometric") }}
       </button>
       <PinPad v-model="pin" :length="6" :error="error" @complete="tryUnlock" />
-      <p
-        v-if="attempts > 2"
-        class="text-[11px] text-rust text-center mt-3"
-        data-testid="forgot-hint"
-      >
-        {{ t("lock.forgot") }}
-      </p>
+      <div class="mt-4 text-center">
+        <button
+          @click="openReset"
+          class="text-[11px] tracking-wide transition-colors underline-offset-4 hover:underline"
+          :class="attempts > 2 ? 'text-rust' : 'text-fiatDim hover:text-fiat'"
+          data-testid="forgot-pin-btn"
+        >
+          {{ t("lock.forgotLink") }}
+        </button>
+      </div>
     </div>
+
+    <!-- Forgot PIN → wipe confirmation -->
+    <Teleport to="body">
+      <Transition name="sheet">
+        <div
+          v-if="resetOpen"
+          class="fixed inset-0 z-50 flex flex-col justify-end"
+          data-testid="reset-modal"
+          @click.self="resetOpen = false"
+        >
+          <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="resetOpen = false" />
+          <div class="sheet-panel relative bg-gunmetal-800 border-t border-rust/40 rounded-t-2xl px-4 pt-3 pb-4 shadow-[0_-12px_40px_rgba(0,0,0,0.6)]">
+            <div class="w-10 h-1 rounded-full bg-gunmetal-400 mx-auto mb-3" />
+            <div class="flex items-start gap-3">
+              <span class="w-10 h-10 rounded-lg grid place-items-center shrink-0 border border-rust/40 bg-rust/10 text-rust">
+                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+                </svg>
+              </span>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-bone">{{ t("lock.reset.title") }}</p>
+                <p class="text-[12px] text-fiat leading-relaxed mt-1">{{ t("lock.reset.desc") }}</p>
+              </div>
+            </div>
+
+            <ul class="mt-3 flex flex-col gap-1.5 text-[11px] text-fiatDim">
+              <li class="flex gap-2"><span class="text-rust">•</span>{{ t("lock.reset.b1") }}</li>
+              <li class="flex gap-2"><span class="text-rust">•</span>{{ t("lock.reset.b2") }}</li>
+              <li class="flex gap-2"><span class="text-cyan-voltGlow">•</span>{{ t("lock.reset.b3") }}</li>
+            </ul>
+
+            <label class="mt-4 flex items-start gap-2.5 text-[12px] text-fiat cursor-pointer select-none">
+              <input v-model="resetAck" type="checkbox" class="mt-0.5 accent-[#E25822]" data-testid="reset-ack" />
+              <span>{{ t("lock.reset.ack") }}</span>
+            </label>
+
+            <div class="mt-4 flex flex-col gap-2">
+              <div :class="resetAck ? '' : 'opacity-40 pointer-events-none'" data-testid="reset-hold-wrap">
+                <HoldButton :label="t('lock.reset.hold')" variant="rust" :hold-ms="1500" @fired="doReset" />
+              </div>
+              <button
+                @click="resetOpen = false"
+                class="w-full py-2.5 rounded-md border border-gunmetal-400 text-fiat text-xs hover:text-bone hover:bg-gunmetal-700"
+                data-testid="reset-cancel-btn"
+              >
+                {{ t("lock.reset.cancel") }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
+
+<style scoped>
+.sheet-enter-active, .sheet-leave-active { transition: opacity 0.2s ease; }
+.sheet-enter-active .sheet-panel, .sheet-leave-active .sheet-panel { transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1); }
+.sheet-enter-from, .sheet-leave-to { opacity: 0; }
+.sheet-enter-from .sheet-panel, .sheet-leave-to .sheet-panel { transform: translateY(100%); }
+</style>

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { encryptSecret, decryptSecret, pinHash } from "@/lib/crypto";
 import { useSettingsStore } from "@/stores/settings";
 import { vaultStorage } from "@/lib/storage";
+import { MAINNET } from "@/lib/network";
 
 export interface AccountMeta {
   index: number;
@@ -11,9 +12,11 @@ export interface AccountMeta {
 
 interface EncryptedVault {
   cipher: string; // AES-encrypted mnemonic
-  accounts: AccountMeta[]; // derived public metadata
+  accounts: AccountMeta[]; // derived public metadata (mainnet addresses)
   activeIndex: number;
   createdAt: number;
+  /** Addresses for other networks: addressVersion → accountIndex → address. */
+  altAddresses?: Record<string, Record<string, string>>;
 }
 
 /**
@@ -34,15 +37,23 @@ export const useAuthStore = defineStore("auth", {
   getters: {
     hasWallet: (s) => !!s.account,
     isLocked: (s) => !s._pin,
-    accounts: (s) => s.account?.accounts ?? [],
+    /** Accounts with addresses of the ACTIVE network ("" when not derived yet). */
+    accounts(s): AccountMeta[] {
+      if (!s.account) return [];
+      const v = String(useSettingsStore().networkVersion);
+      if (v === String(MAINNET.version)) return s.account.accounts;
+      const alt = s.account.altAddresses?.[v] ?? {};
+      return s.account.accounts.map((a) => ({ ...a, address: alt[String(a.index)] ?? "" }));
+    },
     activeIndex: (s) => s.account?.activeIndex ?? 0,
-    activeAccount(s): AccountMeta | null {
-      if (!s.account) return null;
-      return (
-        s.account.accounts.find((a) => a.index === s.account!.activeIndex) ??
-        s.account.accounts[0] ??
-        null
-      );
+    activeAccount(): AccountMeta | null {
+      const list: AccountMeta[] = this.accounts;
+      if (!list.length) return null;
+      return list.find((a) => a.index === this.activeIndex) ?? list[0] ?? null;
+    },
+    /** True when the active network's addresses still need deriving (requires unlock). */
+    needsAddressDerivation(): boolean {
+      return this.hasWallet && this.accounts.some((a: AccountMeta) => !a.address);
     },
     address(): string {
       return this.activeAccount?.address ?? "";
@@ -86,6 +97,11 @@ export const useAuthStore = defineStore("auth", {
       if (this.account.accounts.some((a) => a.index === index)) {
         this.account.activeIndex = index;
       }
+    },
+    setAltAddresses(version: number, map: Record<string, string>) {
+      if (!this.account) return;
+      if (!this.account.altAddresses) this.account.altAddresses = {};
+      this.account.altAddresses[String(version)] = { ...(this.account.altAddresses[String(version)] ?? {}), ...map };
     },
     renameAccount(index: number, label: string) {
       if (!this.account) return;

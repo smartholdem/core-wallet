@@ -7,7 +7,7 @@
  *   apps/release/smartholdem-wallet-android-<version>.apk   copied if a release APK exists
  *
  * Usage:  yarn release:ota              (= build:android + this script)
- *         node scripts/release-assets.mjs [--min-native 1.4.8]
+ *         node scripts/release-assets.mjs [--min-native 1.5.0]
  *
  * minNativeVersion defaults to versionName in android/app/build.gradle (= "this bundle
  * needs the current APK"). If the native side did NOT change in this release, pass the

@@ -7,15 +7,31 @@ import AuthorizeMessage from "@/components/AuthorizeMessage.vue";
 import { onMounted, onBeforeUnmount, watch, watchEffect } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useSettingsStore } from "@/stores/settings";
+import { useWalletStore } from "@/stores/wallet";
 
 const auth = useAuthStore();
 const settings = useSettingsStore();
+const wallet = useWalletStore();
+
+// Before child views mount: migrate node list + point @smartholdem/crypto at the saved network.
+settings.bootstrapNetwork();
 
 onMounted(() => {
   auth.bootstrap();
   settings.applyTheme();
   settings.updateNodes().catch(() => {});
 });
+
+// Non-mainnet addresses are derived from the seed, so they can only appear after unlock.
+watch(
+  () => [auth.isLocked, settings.networkVersion] as const,
+  ([locked]) => {
+    if (!locked && wallet.ensureNetworkAddresses() && auth.address) {
+      wallet.fetchBalance(auth.address);
+      wallet.fetchTransactions(auth.address);
+    }
+  },
+);
 
 // Reactively keep the body/html data-theme in sync with the store.
 watchEffect(() => {

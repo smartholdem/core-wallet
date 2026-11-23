@@ -11,10 +11,15 @@ import { HDKey } from "@scure/bip32";
 import { useSettingsStore } from "@/stores/settings";
 import { useAuthStore, type AccountMeta } from "@/stores/auth";
 
+import { MAINNET } from "@/lib/network";
+import { signChainTx, type ChainTx } from "@/lib/tokenTx";
+
 Managers.configManager.setFromPreset("mainnet");
 Managers.configManager.setHeight(10000000);
 
-export const STH_NETWORK = 63;
+/** Mainnet address prefix. The ACTIVE network's prefix is `useSettingsStore().networkVersion`. */
+export const STH_NETWORK = MAINNET.version;
+const netVersion = () => useSettingsStore().networkVersion;
 export const STH_FEE = 0.25;
 // SmartHoldem BIP44 derivation. Note: official SLIP-44 lists 255 for STH
 // the SmartHoldem team's project spec uses coin_type=255 — honored verbatim.
@@ -40,11 +45,11 @@ function bytesToHex(b: Uint8Array): string {
 }
 
 /** Derive STH keys/address for a given account index from a root mnemonic. */
-function deriveAccount(mnemonic: string, index: number) {
+function deriveAccount(mnemonic: string, index: number, version: number = netVersion()) {
   // Account #0 = passphrase-derived (matches wallet-pro v1 semantics).
   if (index === 0) {
     const keys = Identities.Keys.fromPassphrase(mnemonic);
-    const address = Identities.Address.fromPublicKey(keys.publicKey, STH_NETWORK);
+    const address = Identities.Address.fromPublicKey(keys.publicKey, version);
     return { keys, address, privateKey: keys.privateKey, publicKey: keys.publicKey };
   }
   // Account #N>0 = BIP44 HD derivation m/44'/255'/N'/0/0
@@ -54,7 +59,7 @@ function deriveAccount(mnemonic: string, index: number) {
   if (!child.privateKey) throw new Error("HD derivation failed");
   const pkHex = bytesToHex(child.privateKey);
   const keys = Identities.Keys.fromPrivateKey(pkHex);
-  const address = Identities.Address.fromPublicKey(keys.publicKey, STH_NETWORK);
+  const address = Identities.Address.fromPublicKey(keys.publicKey, version);
   return { keys, address, privateKey: keys.privateKey, publicKey: keys.publicKey };
 }
 
@@ -101,20 +106,20 @@ export const useWalletStore = defineStore("walletStorage", {
     /** Generate a brand-new BIP-39 mnemonic + the account #0 address. */
     createNew() {
       const mnemonic = generateMnemonic();
-      const { address } = deriveAccount(mnemonic, 0);
+      const { address } = deriveAccount(mnemonic, 0, STH_NETWORK);
       return { mnemonic, address };
     },
 
     /** Resolve account #0 address for an imported secret (mnemonic or private key). */
     addressFromSecret(secret: string) {
       const isBip39 = validateMnemonic(secret.trim());
-      const { address } = deriveAccount(secret.trim(), 0);
+      const { address } = deriveAccount(secret.trim(), 0, STH_NETWORK);
       return { isBip39, address };
     },
 
     validateAddress(address: string): boolean {
       try {
-        return Identities.Address.validate(address, STH_NETWORK);
+        return Identities.Address.validate(address, netVersion());
       } catch {
         return false;
       }
@@ -129,18 +134,37 @@ export const useWalletStore = defineStore("walletStorage", {
       const used = new Set(auth.accounts.map((a) => a.index));
       let idx = 0;
       while (used.has(idx)) idx++;
-      const { address } = deriveAccount(mnemonic, idx);
+      const { address } = deriveAccount(mnemonic, idx, STH_NETWORK);
       const meta: AccountMeta = {
         index: idx,
         address,
         label: label || `Account ${idx + 1}`,
       };
       auth.addAccount(meta);
+      const v = netVersion();
+      if (v !== STH_NETWORK) {
+        auth.setAltAddresses(v, { [idx]: deriveAccount(mnemonic, idx, v).address });
+      }
       auth.setActiveAccount(idx);
       // Refresh data for the new active account.
-      this.fetchBalance(address);
-      this.fetchTransactions(address);
+      this.fetchBalance(auth.address);
+      this.fetchTransactions(auth.address);
       return meta;
+    },
+
+    /** Derive addresses of the ACTIVE network for every account (no-op on mainnet / when locked). */
+    ensureNetworkAddresses(): boolean {
+      const auth = useAuthStore();
+      const v = netVersion();
+      if (v === STH_NETWORK || !auth.needsAddressDerivation) return true;
+      const mnemonic = auth.decryptSecret();
+      if (!mnemonic) return false;
+      const map: Record<string, string> = {};
+      for (const a of auth.account?.accounts ?? []) {
+        map[String(a.index)] = deriveAccount(mnemonic, a.index, v).address;
+      }
+      auth.setAltAddresses(v, map);
+      return true;
     },
 
     setActiveAccount(index: number) {
@@ -249,6 +273,7 @@ export const useWalletStore = defineStore("walletStorage", {
       const builder = Transactions.BuilderFactory.transfer()
         .fee((fee * 1e8).toString())
         .version(2)
+        .network(netVersion())
         .nonce(nextNonce)
         .recipientId(args.recipient)
         .amount((args.amount * 1e8).toFixed(0));
@@ -304,6 +329,51 @@ export const useWalletStore = defineStore("walletStorage", {
       }, 9000);
 
       return { tx, response: res.data?.data ?? res.data };
+    },
+
+    /**
+     * Sign + broadcast a raw sth-core transaction (token / sObject groups).
+     * `build` receives the sender context and returns the unsigned tx.
+     */
+    async sendChainTx(
+      build: (ctx: { version: 2; network: number; nonce: string; senderPublicKey: string; amount: "0" }) => ChainTx,
+    ): Promise<ChainTx> {
+      const auth = useAuthStore();
+      const mnemonic = auth.decryptSecret();
+      if (!mnemonic) throw new Error("Wallet is locked");
+      if (!auth.address) throw new Error("No active address");
+      const { keys, address } = deriveAccount(mnemonic, auth.activeIndex);
+      if (address !== auth.address) throw new Error("Address derivation mismatch — vault may be corrupted");
+
+      await this.fetchBalance(address);
+      const nonce = (BigInt(this.nonces[address] || "0") + 1n).toString();
+      const unsigned = build({ version: 2, network: netVersion(), nonce, senderPublicKey: keys.publicKey, amount: "0" });
+      const tx = signChainTx(unsigned, {
+        sha256: (d) => new Uint8Array(Crypto.HashAlgorithms.sha256(Buffer.from(d))),
+        sign: (h) => Crypto.Hash.signSchnorr(Buffer.from(h), keys),
+      });
+
+      const res = await axios.post(
+        `${this.apiBase}/transactions`,
+        { transactions: [tx] },
+        { headers: { "Content-Type": "application/json" }, timeout: 12000 },
+      );
+      const body = res.data ?? {};
+      const invalid: string[] = body.data?.invalid ?? [];
+      if (invalid.length) {
+        const e = body.errors?.[invalid[0]];
+        const first = Array.isArray(e) ? e[0] : e;
+        throw new Error((typeof first === "string" ? first : first?.message ?? first?.type) || "Rejected by node");
+      }
+
+      this.inflightTxs[address] = (this.inflightTxs[address] ?? 0) + 1;
+      this.nonces[address] = nonce;
+      setTimeout(() => {
+        if ((this.inflightTxs[address] ?? 0) > 0) this.inflightTxs[address] -= 1;
+        this.fetchBalance(address).catch(() => {});
+        this.fetchTransactions(address, 8).catch(() => {});
+      }, 9000);
+      return tx;
     },
 
     /** Sign an arbitrary message with the active account's Schnorr key. */
@@ -403,7 +473,7 @@ export const useWalletStore = defineStore("walletStorage", {
           // network=23 (ARK default), the chain rejects the bytes with
           // "Read over buffer boundary". Pinning both fields makes the
           // signed payload self-describing.
-          .network(STH_NETWORK)
+          .network(netVersion())
           .typeGroup(1)
           .nonce(nextNonce)
           .recipientId(recipient)
